@@ -2,6 +2,7 @@ package atheria.fewizz.trade.client.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import atheria.fewizz.trade.Trade.TradeState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
@@ -29,10 +30,12 @@ public class GuiButtonTrade extends GuiButton {
 		VertexBuffer vb = tess.getBuffer();
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		
-		vb.pos(x, y + height, 0).tex(0, 1 / 3F).endVertex();
-		vb.pos(x + width, y + height, 0).tex(1, 1 / 3F).endVertex();
-		vb.pos(x + width, y, 0).tex(1, 0).endVertex();
-		vb.pos(x, y, 0).tex(0, 0).endVertex();
+		float tyOffset = guiTrade.containerTrade.getTradeState().state == TradeState.State.READY ? 1F / 3F : 2F / 3F;
+		
+		vb.pos(x, y + height, 0).tex(0, 1 / 3F + tyOffset).endVertex();
+		vb.pos(x + width, y + height, 0).tex(1, 1 / 3F + tyOffset).endVertex();
+		vb.pos(x + width, y, 0).tex(1, tyOffset).endVertex();
+		vb.pos(x, y, 0).tex(0, tyOffset).endVertex();
 		
 		tess.draw();
 	}

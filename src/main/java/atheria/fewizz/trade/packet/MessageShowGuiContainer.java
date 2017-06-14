@@ -3,6 +3,7 @@ package atheria.fewizz.trade.packet;
 import java.util.Objects;
 
 import atheria.fewizz.trade.Trade;
+import atheria.fewizz.trade.Trade.TradeState;
 import atheria.fewizz.trade.client.gui.GuiTrade;
 import atheria.fewizz.trade.inventory.ContainerTrade;
 import atheria.fewizz.trade.inventory.InventoryTrade;
@@ -18,14 +19,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MessageSShowGuiContainer implements IMessage {
+public class MessageShowGuiContainer implements IMessage {
 	public String otherPlayerName;
 	public int windowID;
 
-	public MessageSShowGuiContainer() {
+	public MessageShowGuiContainer() {
 	}
 	
-	public MessageSShowGuiContainer(String playerName, int windowID) {
+	public MessageShowGuiContainer(String playerName, int windowID) {
 		this.otherPlayerName = playerName;
 		this.windowID = windowID;
 	}
@@ -43,19 +44,19 @@ public class MessageSShowGuiContainer implements IMessage {
 		buf.writeInt(windowID);
 	};
 	
-	public static class Handler implements IMessageHandler<MessageSShowGuiContainer, IMessage> {
+	public static class HandlerClient implements IMessageHandler<MessageShowGuiContainer, IMessage> {
 
 		@Override
-		public IMessage onMessage(MessageSShowGuiContainer message, MessageContext ctx) {
+		public IMessage onMessage(MessageShowGuiContainer message, MessageContext ctx) {
 			onMessageClient(message);
 			
 			return null;
 		}
 		
 		@SideOnly(Side.CLIENT)
-		public void onMessageClient(MessageSShowGuiContainer message) {
+		public void onMessageClient(MessageShowGuiContainer message) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
-				ContainerTrade container = new ContainerTrade(Minecraft.getMinecraft().player, message.otherPlayerName, new InventoryTrade(), new InventoryTrade());
+				ContainerTrade container = new ContainerTrade(Minecraft.getMinecraft().player, message.otherPlayerName, new TradeState(), new TradeState(), new InventoryTrade(), new InventoryTrade());
 				FMLCommonHandler.instance().showGuiScreen(new GuiTrade(container));
 				Minecraft.getMinecraft().player.openContainer.windowId = message.windowID;
 			});

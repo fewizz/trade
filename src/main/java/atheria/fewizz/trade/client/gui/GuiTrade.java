@@ -2,6 +2,9 @@ package atheria.fewizz.trade.client.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import atheria.fewizz.trade.Trade;
+import atheria.fewizz.trade.inventory.ContainerTrade;
+import atheria.fewizz.trade.packet.MessageTradeState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
@@ -16,9 +19,11 @@ public class GuiTrade extends GuiContainer {
 	static final int TEXTURE_H = 356;
 	static final int W = TEXTURE_W / 2;
 	static final int H = TEXTURE_H / 2;
+	final ContainerTrade containerTrade;
 
-	public GuiTrade(Container inventorySlotsIn) {
+	public GuiTrade(ContainerTrade inventorySlotsIn) {
 		super(inventorySlotsIn);
+		this.containerTrade = inventorySlotsIn;
 	}
 
 	@Override
@@ -30,7 +35,17 @@ public class GuiTrade extends GuiContainer {
 		this.guiLeft = width / 2 - W / 2;
 		this.guiTop = height / 2 - H / 2;
 		
-		addButton(new GuiButtonTrade(this, 0, W / 2 - GuiButtonTrade.W / 2, 84));
+		addButton(new GuiButtonTrade(this, 0, W / 2 - GuiButtonTrade.W / 2, 84) {
+			@Override
+			public void mouseReleased(int mouseX, int mouseY) {
+				//if(!isPointInRegion(x, y, width, height, mouseX, mouseY)) {
+				//	return;
+				//}
+				
+				containerTrade.setTradeState(containerTrade.getTradeState().state.opposite());
+				Trade.NETWORK_WRAPPER.sendToServer(new MessageTradeState(containerTrade.getTradeState().state));
+			}
+		});
 	}
 	
 	@Override
