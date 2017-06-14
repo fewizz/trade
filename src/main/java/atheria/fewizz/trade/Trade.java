@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.lwjgl.input.Keyboard;
 
-import atheria.fewizz.trade.command.CommandTrade;
-import atheria.fewizz.trade.command.CommandTradeAccept;
 import atheria.fewizz.trade.inventory.ContainerTrade;
 import atheria.fewizz.trade.inventory.InventoryTrade;
 import atheria.fewizz.trade.packet.MessageCTradeRequest;
@@ -66,12 +64,6 @@ public class Trade {
 	@SideOnly(Side.CLIENT)
 	public void onClientInit() {
 		keyTrade = new KeyBinding("Trade key", Keyboard.KEY_V, "key.categories.gameplay");
-	}
-
-	@EventHandler
-	public void onServerInit(FMLServerStartingEvent event) {
-		event.registerServerCommand(new CommandTrade());
-		event.registerServerCommand(new CommandTradeAccept());
 	}
 
 	@SideOnly(Side.CLIENT)
