@@ -3,7 +3,7 @@ package atheria.fewizz.trade.client.gui;
 import org.lwjgl.opengl.GL11;
 
 import atheria.fewizz.trade.Trade;
-import atheria.fewizz.trade.inventory.ContainerTrade;
+import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
 import atheria.fewizz.trade.packet.MessageTradeState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -19,9 +19,9 @@ public class GuiTrade extends GuiContainer {
 	static final int TEXTURE_H = 356;
 	static final int W = TEXTURE_W / 2;
 	static final int H = TEXTURE_H / 2;
-	final ContainerTrade containerTrade;
+	final ContainerTradeAbstract containerTrade;
 
-	public GuiTrade(ContainerTrade inventorySlotsIn) {
+	public GuiTrade(ContainerTradeAbstract inventorySlotsIn) {
 		super(inventorySlotsIn);
 		this.containerTrade = inventorySlotsIn;
 	}
@@ -38,10 +38,6 @@ public class GuiTrade extends GuiContainer {
 		addButton(new GuiButtonTrade(this, 0, W / 2 - GuiButtonTrade.W / 2, 84) {
 			@Override
 			public void mouseReleased(int mouseX, int mouseY) {
-				//if(!isPointInRegion(x, y, width, height, mouseX, mouseY)) {
-				//	return;
-				//}
-				
 				containerTrade.setTradeState(containerTrade.getTradeState().state.opposite());
 				Trade.NETWORK_WRAPPER.sendToServer(new MessageTradeState(containerTrade.getTradeState().state));
 			}

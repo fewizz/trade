@@ -7,7 +7,8 @@ import java.util.Map;
 
 import org.lwjgl.input.Keyboard;
 
-import atheria.fewizz.trade.inventory.ContainerTrade;
+import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
+import atheria.fewizz.trade.inventory.ContainerTradeServer;
 import atheria.fewizz.trade.inventory.InventoryTrade;
 import atheria.fewizz.trade.packet.MessageShowGuiContainer;
 import atheria.fewizz.trade.packet.MessageTradeRequest;
@@ -111,15 +112,9 @@ public class Trade {
 		String requestedPlayerName = requestedPlayer.getName();
 		String acceptedPlayerName = acceptedPlayer.getName();
 		System.out.println(requestedPlayerName + " " + acceptedPlayerName);
-
-		InventoryTrade invR = new InventoryTrade();
-		InventoryTrade invA = new InventoryTrade();
-
-		TradeState rts = new TradeState();
-		TradeState ats = new TradeState();
 		
-		ContainerTrade conR = new ContainerTrade(requestedPlayer, acceptedPlayerName, rts, ats, invR, invA);
-		ContainerTrade conA = new ContainerTrade(acceptedPlayer, requestedPlayerName, ats, rts, invA, invR);
+		ContainerTradeServer conR = new ContainerTradeServer(requestedPlayer, acceptedPlayerName);
+		ContainerTradeServer conA = new ContainerTradeServer(acceptedPlayer, requestedPlayerName);
 
 		showGuiContainerForPlayers(requestedPlayer, acceptedPlayer, conR);
 		showGuiContainerForPlayers(acceptedPlayer, requestedPlayer, conA);
@@ -128,7 +123,7 @@ public class Trade {
 	}
 
 	// On server world
-	private static void showGuiContainerForPlayers(EntityPlayerMP player, EntityPlayerMP otherPlayer, ContainerTrade container) {
+	private static void showGuiContainerForPlayers(EntityPlayerMP player, EntityPlayerMP otherPlayer, ContainerTradeAbstract container) {
 		player.getNextWindowId();
 		player.closeContainer();
 		int windowId = player.currentWindowId;

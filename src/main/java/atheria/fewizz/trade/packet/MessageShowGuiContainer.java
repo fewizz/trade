@@ -5,7 +5,8 @@ import java.util.Objects;
 import atheria.fewizz.trade.Trade;
 import atheria.fewizz.trade.Trade.TradeState;
 import atheria.fewizz.trade.client.gui.GuiTrade;
-import atheria.fewizz.trade.inventory.ContainerTrade;
+import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
+import atheria.fewizz.trade.inventory.ContainerTradeClient;
 import atheria.fewizz.trade.inventory.InventoryTrade;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -56,7 +57,7 @@ public class MessageShowGuiContainer implements IMessage {
 		@SideOnly(Side.CLIENT)
 		public void onMessageClient(MessageShowGuiContainer message) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
-				ContainerTrade container = new ContainerTrade(Minecraft.getMinecraft().player, message.otherPlayerName, new TradeState(), new TradeState(), new InventoryTrade(), new InventoryTrade());
+				ContainerTradeAbstract container = new ContainerTradeClient(message.otherPlayerName);
 				FMLCommonHandler.instance().showGuiScreen(new GuiTrade(container));
 				Minecraft.getMinecraft().player.openContainer.windowId = message.windowID;
 			});
