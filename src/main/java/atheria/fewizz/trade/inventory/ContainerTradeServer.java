@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import atheria.fewizz.trade.Trade;
 import atheria.fewizz.trade.Trade.TradeState;
-import atheria.fewizz.trade.Trade.TradeState.State;
 import atheria.fewizz.trade.packet.MessageTradeState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -48,8 +47,8 @@ public class ContainerTradeServer extends ContainerTradeAbstract {
 	void onTick() {
 		if (otherContainer != null && swapTimeMillis != null && System.currentTimeMillis() >= swapTimeMillis) {
 			swapItems();
-			setTradeState(State.NOT_READY);
-			otherContainer.setTradeState(State.NOT_READY);
+			setTradeState(TradeState.NOT_READY);
+			otherContainer.setTradeState(TradeState.NOT_READY);
 			swapTimeMillis = null;
 			
 			updateTradeStateOfClients();
@@ -57,11 +56,17 @@ public class ContainerTradeServer extends ContainerTradeAbstract {
 	}
 	
 	public void swapItems() {
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < InventoryTrade.SIZE; i++) {
 			ItemStack stack = inventoryTrade.getStackInSlot(i);
 			inventoryTrade.setInventorySlotContents(i, otherContainer.inventoryTrade.getStackInSlot(i));
 			otherContainer.inventoryTrade.setInventorySlotContents(i, stack);
 		}
+	}
+	
+	@Override
+	public void setTradeState(TradeState state) {
+		super.setTradeState(state);
+		updateTradeStateOfClients();
 	}
 	
 	void updateTradeStateOfClients() {
@@ -73,8 +78,8 @@ public class ContainerTradeServer extends ContainerTradeAbstract {
 			player.sendMessage(new TextComponentString("Player '" + otherPlayerName + "' is offline now"));
 		}
 
-		Trade.NETWORK_WRAPPER.sendTo(new MessageTradeState(tradeState.state, otherContainer.tradeState.state), getPlayer());
-		Trade.NETWORK_WRAPPER.sendTo(new MessageTradeState(otherContainer.tradeState.state, tradeState.state), otherPlayer);
+		Trade.NETWORK_WRAPPER.sendTo(new MessageTradeState(tradeState, otherContainer.tradeState), getPlayer());
+		Trade.NETWORK_WRAPPER.sendTo(new MessageTradeState(otherContainer.tradeState, tradeState), otherPlayer);
 	}
 
 	@Override
@@ -86,13 +91,14 @@ public class ContainerTradeServer extends ContainerTradeAbstract {
 			getOtherPlayer().closeScreen();
 		}
 
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < InventoryTrade.SIZE; i++) {
 			if (!player.inventory.addItemStackToInventory(inventoryTrade.getStackInSlot(i))) {
 				player.dropItem(inventoryTrade.getStackInSlot(i), false);
 			}
 		}
 	}
 
+	// Because player instance can be recreated
 	EntityPlayerMP getOtherPlayer() {
 		return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(otherPlayerName);
 	}

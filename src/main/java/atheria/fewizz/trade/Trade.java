@@ -112,7 +112,7 @@ public class Trade {
 		String requestedPlayerName = requestedPlayer.getName();
 		String acceptedPlayerName = acceptedPlayer.getName();
 		System.out.println(requestedPlayerName + " " + acceptedPlayerName);
-		
+
 		ContainerTradeServer conR = new ContainerTradeServer(requestedPlayer, acceptedPlayerName);
 		ContainerTradeServer conA = new ContainerTradeServer(acceptedPlayer, requestedPlayerName);
 
@@ -136,15 +136,12 @@ public class Trade {
 		MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, player.openContainer));
 	}
 
-	public static class TradeState {
-		public State state = State.NOT_READY;
+	public enum TradeState {
+		READY, NOT_READY;
 
-		public enum State {
-			READY, NOT_READY;
-
-			public State opposite() {
-				return this == READY ? State.NOT_READY : READY;
-			}
+		public TradeState opposite() {
+			return this == READY ? TradeState.NOT_READY : READY;
 		}
 	}
+
 }

@@ -1,7 +1,6 @@
 package atheria.fewizz.trade.packet;
 
 import atheria.fewizz.trade.Trade.TradeState;
-import atheria.fewizz.trade.Trade.TradeState.State;
 import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -13,25 +12,25 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageTradeState implements IMessage {
-	TradeState.State state;
-	TradeState.State otherState = State.NOT_READY;
+	TradeState state;
+	TradeState otherState = TradeState.NOT_READY;
 
 	public MessageTradeState() {
 	}
 	
-	public MessageTradeState(TradeState.State tradeState) {
+	public MessageTradeState(TradeState tradeState) {
 		this.state = tradeState;
 	}
 	
-	public MessageTradeState(TradeState.State tradeState, TradeState.State otherState) {
+	public MessageTradeState(TradeState tradeState, TradeState otherState) {
 		this.state = tradeState;
 		this.otherState = otherState;
 	}
 	
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		state = TradeState.State.values()[buf.readByte()];
-		otherState = TradeState.State.values()[buf.readByte()];
+		state = TradeState.values()[buf.readByte()];
+		otherState = TradeState.values()[buf.readByte()];
 	}
 
 	@Override
@@ -53,8 +52,8 @@ public class MessageTradeState implements IMessage {
 		@SideOnly(Side.CLIENT)
 		public void onClientMessage(MessageTradeState message) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
+				((ContainerTradeAbstract)Minecraft.getMinecraft().player.openContainer).otherContainer.setTradeState(message.otherState);
 				((ContainerTradeAbstract)Minecraft.getMinecraft().player.openContainer).setTradeState(message.state);
-				((ContainerTradeAbstract)Minecraft.getMinecraft().player.openContainer).setOtherPlayerTradeState(message.otherState);
 			});
 		}
 		

@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import atheria.fewizz.trade.Trade;
 import atheria.fewizz.trade.Trade.TradeState;
-import atheria.fewizz.trade.Trade.TradeState.State;
 import atheria.fewizz.trade.packet.MessageTradeState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -23,31 +22,34 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class ContainerTradeAbstract extends Container {
 	final InventoryTrade inventoryTrade;
 	final InventoryPlayer inventoryPlayer;
-	final String otherPlayerName;
-	final String playerName;
-	protected final TradeState tradeState;
-	ContainerTradeAbstract otherContainer;
-	Long swapTimeMillis = null;
+	public final String otherPlayerName;
+	public final String playerName;
+	TradeState tradeState = TradeState.NOT_READY;
+	public ContainerTradeAbstract otherContainer;
+	public Long swapTimeMillis = null;
 
 	public ContainerTradeAbstract(EntityPlayer player, String otherPlayerName) {
 		this.inventoryTrade = new InventoryTrade();
 		this.inventoryPlayer = player.inventory;
 		this.otherPlayerName = otherPlayerName;
 		this.playerName = player.getName();
-		this.tradeState = new TradeState();
 	}
 	
 	public void initSlots() {
 		for (int h = 0; h < 3; h++) {
 			for (int w = 0; w < 9; w++) {
-				addSlotToContainer(new Slot(inventoryPlayer, h * 9 + w + 9, w * 18 + 6, 103 + h * 18));
+				addSlotToContainer(new Slot(inventoryPlayer, h * 9 + w + 9, w * 18 + 6, 92 + h * 18));
 			}
+		}
+		
+		for (int x = 0; x < 9; x++) {
+			addSlotToContainer(new Slot(inventoryPlayer, x, x * 18 + 6, 150));
 		}
 		
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
-				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, x * 18 + 13, 29 + y * 18));
-				addSlotToContainer(new Slot(otherContainer.inventoryTrade, x * 3 + y, x * 18 + 90, 29 + y * 18) {
+				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, x * 18 + 14, 19 + y * 18));
+				addSlotToContainer(new Slot(otherContainer.inventoryTrade, x * 3 + y, x * 18 + 107, 19 + y * 18) {
 					@Override
 					public boolean canTakeStack(EntityPlayer playerIn) {
 						return false;
@@ -62,20 +64,18 @@ public abstract class ContainerTradeAbstract extends Container {
 		}
 	}
 
-	public void setTradeState(State state) {
-		this.tradeState.state = state;
+	public void setTradeState(TradeState state) {
+		this.tradeState = state;
 
-		if (tradeState.state == otherContainer.tradeState.state && tradeState.state == State.READY) {
+		if (tradeState == otherContainer.tradeState && tradeState == TradeState.READY) {
 			swapTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3);
+			otherContainer.swapTimeMillis = swapTimeMillis;
 		}
 
-		if (tradeState.state == State.NOT_READY || otherContainer.tradeState.state == State.NOT_READY) {
+		if (tradeState == TradeState.NOT_READY || otherContainer.tradeState == TradeState.NOT_READY) {
 			swapTimeMillis = null;
+			otherContainer.swapTimeMillis = null;
 		}
-	}
-
-	public void setOtherPlayerTradeState(State state) {
-		this.otherContainer.tradeState.state = state;
 	}
 
 	public TradeState getTradeState() {

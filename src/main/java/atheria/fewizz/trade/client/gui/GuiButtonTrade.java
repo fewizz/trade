@@ -12,9 +12,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiButtonTrade extends GuiButton {
 	static final ResourceLocation RL_BUTTON_TRADE = new ResourceLocation("trade:textures/gui/button_trade.png");
-	public static final int TEX_SIZE = 51;
-	public static final int W = TEX_SIZE / 2;
-	public static final int H = TEX_SIZE / 2 / 3;
+	public static final int W = 51 / 2;
+	public static final int H = 51 / 2 / 3;
 	final GuiTrade guiTrade;
 	
 	public GuiButtonTrade(GuiTrade gui, int id, int x, int y) {
@@ -30,7 +29,7 @@ public class GuiButtonTrade extends GuiButton {
 		VertexBuffer vb = tess.getBuffer();
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		
-		float tyOffset = guiTrade.containerTrade.getTradeState().state == TradeState.State.READY ? 1F / 3F : 2F / 3F;
+		float tyOffset = guiTrade.containerTrade.getTradeState() != TradeState.READY ? 1F / 3F : 2F / 3F;
 		
 		vb.pos(x, y + height, 0).tex(0, 1 / 3F + tyOffset).endVertex();
 		vb.pos(x + width, y + height, 0).tex(1, 1 / 3F + tyOffset).endVertex();
