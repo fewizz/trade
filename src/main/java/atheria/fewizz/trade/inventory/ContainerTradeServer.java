@@ -50,6 +50,7 @@ public class ContainerTradeServer extends ContainerTradeAbstract {
 			setTradeState(TradeState.NOT_READY);
 			otherContainer.setTradeState(TradeState.NOT_READY);
 			swapTimeMillis = null;
+			otherContainer.swapTimeMillis = null;
 			
 			updateTradeStateOfClients();
 		}
