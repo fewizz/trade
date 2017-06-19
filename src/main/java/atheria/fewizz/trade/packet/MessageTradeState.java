@@ -56,7 +56,7 @@ public class MessageTradeState implements IMessage {
 		public void onClientMessage(MessageTradeState message) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				Container c = Minecraft.getMinecraft().player.openContainer;
-				if (c == null || c instanceof ContainerTradeClient) {
+				if (c == null || !(c instanceof ContainerTradeClient)) {
 					return;
 				}
 
@@ -74,7 +74,7 @@ public class MessageTradeState implements IMessage {
 		public IMessage onMessage(MessageTradeState message, MessageContext ctx) {
 			FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> {
 				Container c = (ContainerTradeAbstract) ctx.getServerHandler().player.openContainer;
-				if (c == null || c instanceof ContainerTradeServer) {
+				if (c == null || !(c instanceof ContainerTradeServer)) {
 					return;
 				}
 

@@ -2,8 +2,10 @@ package atheria.fewizz.trade;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.lwjgl.input.Keyboard;
 
@@ -22,6 +24,7 @@ import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -44,7 +47,7 @@ public class Trade {
 	public static final SimpleNetworkWrapper NETWORK_WRAPPER = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
 	// For server world, key = player, value = requested players
-	static final Map<String, List<String>> REQUESTS = new HashMap<>();
+	static final Map<String, Set<String>> REQUESTS = new HashMap<>();
 	@SideOnly(Side.CLIENT)
 	public static KeyBinding keyTrade;
 
@@ -65,7 +68,8 @@ public class Trade {
 
 	@SideOnly(Side.CLIENT)
 	public void onClientInit() {
-		keyTrade = new KeyBinding("Trade key", Keyboard.KEY_V, "key.categories.gameplay");
+		keyTrade = new KeyBinding("Trade", Keyboard.KEY_V, "key.categories.gameplay");
+		ClientRegistry.registerKeyBinding(keyTrade);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -91,17 +95,15 @@ public class Trade {
 			return;
 		}
 
-		List<String> recieverRequests = REQUESTS.get(requestRecieverName);
+		Set<String> recieverRequests = REQUESTS.get(requestRecieverName);
 
 		if (recieverRequests != null && recieverRequests.contains(requestSender.getName())) { // sender accepted reciever's request
 			acceptTrade(requestSender, requestReciever);
 		} else {
-			List<String> senderRequests = REQUESTS.computeIfAbsent(requestSender.getName(), key -> new ArrayList<>());
+			Set<String> senderRequests = REQUESTS.computeIfAbsent(requestSender.getName(), key -> new HashSet());
 			Trade.NETWORK_WRAPPER.sendTo(new MessageTradeRequest(requestSender.getName()), requestReciever);
 
-			if (!senderRequests.contains(requestRecieverName)) {
-				senderRequests.add(requestRecieverName);
-			}
+			senderRequests.add(requestRecieverName);
 
 			requestSender.sendMessage(new TextComponentString("Request sent."));
 		}
