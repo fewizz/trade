@@ -10,8 +10,8 @@ import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
 import atheria.fewizz.trade.packet.MessageTradeState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
@@ -55,7 +55,7 @@ public class GuiTrade extends GuiContainer {
 		mc.getTextureManager().bindTexture(RL_TRADE_GUI_BASE);
 		
 		Tessellator tess = Tessellator.getInstance();
-		VertexBuffer vb = tess.getBuffer();
+		BufferBuilder vb = tess.getBuffer();
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		
 		vb.pos(x, y + H, 0).tex(0, 1).endVertex();

@@ -5,8 +5,8 @@ import org.lwjgl.opengl.GL11;
 import atheria.fewizz.trade.Trade.TradeState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
@@ -21,12 +21,13 @@ public class GuiButtonTrade extends GuiButton {
 		this.guiTrade = gui;
 	}
 	
+	
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float pt) {
 		mc.getTextureManager().bindTexture(RL_BUTTON_TRADE);
 		
 		Tessellator tess = Tessellator.getInstance();
-		VertexBuffer vb = tess.getBuffer();
+		BufferBuilder vb = tess.getBuffer();
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		
 		float tyOffset = guiTrade.containerTrade.getTradeState() != TradeState.READY ? 1F / 3F : 2F / 3F;
