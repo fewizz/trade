@@ -40,13 +40,13 @@ public abstract class ContainerTradeAbstract extends Container {
 			for (int w = 0; w < 9; w++) {
 				addSlotToContainer(new Slot(inventoryPlayer, h * 9 + w + 9, w * 18 + 6, 92 + h * 18));
 			}
-		}
+		} // 0 - 26
 		
 		for (int x = 0; x < 9; x++) {
 			addSlotToContainer(new Slot(inventoryPlayer, x, x * 18 + 6, 150));
-		}
+		} // 27 - 35
 		
-		for (int x = 0; x < 3; x++) {
+		for (int x = 0; x < 3; x++) { // 36 - 53
 			for (int y = 0; y < 3; y++) {
 				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, x * 18 + 14, 19 + y * 18));
 				addSlotToContainer(new Slot(otherContainer.inventoryTrade, x * 3 + y, x * 18 + 107, 19 + y * 18) {
@@ -64,6 +64,24 @@ public abstract class ContainerTradeAbstract extends Container {
 		}
 	}
 
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+        Slot slot = this.inventorySlots.get(index);
+        ItemStack stack = slot.getStack();
+
+        if (slot == null || stack == ItemStack.EMPTY || (index & 0x1) == 1){
+        	return ItemStack.EMPTY;
+        }
+        
+        if(index >= 36 && index < 54) {
+        	if(!mergeItemStack(stack, 0, 35, false)) {
+        		return ItemStack.EMPTY;
+        	}
+        }
+        
+        return stack;
+	}
+	
 	public void setTradeState(TradeState state) {
 		this.tradeState = state;
 
