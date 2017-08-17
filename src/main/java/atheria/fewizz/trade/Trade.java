@@ -43,7 +43,7 @@ public class Trade {
 	public static final Trade INSTANCE = new Trade();
 	public static final String NAME = "Trade";
 	public static final String MODID = "trade";
-	public static final String VERSION = "1.0.0";
+	public static final String VERSION = "1.0.1";
 	public static final SimpleNetworkWrapper NETWORK_WRAPPER = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
 	// For server world, key = player, value = requested players

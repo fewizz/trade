@@ -63,6 +63,24 @@ public abstract class ContainerTradeAbstract extends Container {
 			}
 		}
 	}
+	
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		Slot slot = this.inventorySlots.get(index);
+		ItemStack stack = slot.getStack();
+
+		if (slot == null || stack == ItemStack.EMPTY || (index & 0x1) == 1) {
+			return ItemStack.EMPTY;
+		}
+
+		if (index >= 36 && index < 54) {
+			if (!mergeItemStack(stack, 0, 35, false)) {
+				return ItemStack.EMPTY;
+			}
+		}
+
+		return stack;
+	}
 
 	public void setTradeState(TradeState state) {
 		this.tradeState = state;
