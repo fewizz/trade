@@ -34,18 +34,18 @@ public abstract class ContainerTradeAbstract extends Container {
 		this.otherPlayerName = otherPlayerName;
 		this.playerName = player.getName();
 	}
-	
+
 	public void initSlots() {
 		for (int h = 0; h < 3; h++) {
 			for (int w = 0; w < 9; w++) {
 				addSlotToContainer(new Slot(inventoryPlayer, h * 9 + w + 9, w * 18 + 6, 92 + h * 18));
 			}
 		}
-		
+
 		for (int x = 0; x < 9; x++) {
 			addSlotToContainer(new Slot(inventoryPlayer, x, x * 18 + 6, 150));
 		}
-		
+
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
 				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, x * 18 + 14, 19 + y * 18));
@@ -62,6 +62,24 @@ public abstract class ContainerTradeAbstract extends Container {
 				});
 			}
 		}
+	}
+
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		Slot slot = this.inventorySlots.get(index);
+		ItemStack stack = slot.getStack();
+
+		if (slot == null || stack == null || (index & 0x1) == 1) {
+			return null;
+		}
+
+		if (index >= 36 && index < 54) {
+			if (!mergeItemStack(stack, 0, 35, false)) {
+				return null;
+			}
+		}
+
+		return stack;
 	}
 
 	public void setTradeState(TradeState state) {
@@ -81,7 +99,7 @@ public abstract class ContainerTradeAbstract extends Container {
 	public TradeState getTradeState() {
 		return tradeState;
 	}
-	
+
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		return true;

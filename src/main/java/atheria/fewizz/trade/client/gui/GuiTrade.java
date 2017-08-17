@@ -129,4 +129,12 @@ public class GuiTrade extends GuiContainer {
 		}
 	}
 	
+	public int getGuiLeft() {
+		return super.guiLeft;
+	}
+	
+	public int getGuiTop() {
+		return super.guiTop;
+	}
+	
 }
