@@ -38,7 +38,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(name = Trade.NAME, modid = Trade.MODID, version = Trade.VERSION, acceptedMinecraftVersions = "1.12, 1.12.1")
+@Mod(name = Trade.NAME, modid = Trade.MODID, version = Trade.VERSION, acceptedMinecraftVersions = "[1.12.0,)")
 public class Trade {
 	public static final Trade INSTANCE = new Trade();
 	public static final String NAME = "Trade";

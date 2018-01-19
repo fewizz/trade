@@ -48,7 +48,14 @@ public abstract class ContainerTradeAbstract extends Container {
 		
 		for (int x = 0; x < 3; x++) { // 36 - 53
 			for (int y = 0; y < 3; y++) {
-				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, x * 18 + 14, 19 + y * 18));
+				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, x * 18 + 14, 19 + y * 18) {
+					@Override
+					public void onSlotChanged() {
+						if(getTradeState() == TradeState.READY)
+							setTradeState(TradeState.NOT_READY);
+						super.onSlotChanged();
+					}
+				});
 				addSlotToContainer(new Slot(otherContainer.inventoryTrade, x * 3 + y, x * 18 + 107, 19 + y * 18) {
 					@Override
 					public boolean canTakeStack(EntityPlayer playerIn) {
