@@ -2,22 +2,10 @@ package atheria.fewizz.trade.inventory;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
-import atheria.fewizz.trade.Trade;
 import atheria.fewizz.trade.Trade.TradeState;
-import atheria.fewizz.trade.packet.MessageTradeState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.*;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class ContainerTradeAbstract extends Container {
 	final InventoryTrade inventoryTrade;
@@ -76,17 +64,24 @@ public abstract class ContainerTradeAbstract extends Container {
         Slot slot = this.inventorySlots.get(index);
         ItemStack stack = slot.getStack();
 
-        if (slot == null || stack == ItemStack.EMPTY || (index & 0x1) == 1){
-        	return ItemStack.EMPTY;
+        //if (slot == null || stack == ItemStack.EMPTY || (index & 0x1) == 1){
+        //	return ItemStack.EMPTY;
+        //}
+        
+        if(index >= 27 && index <= 35) {
+        	mergeItemStack(stack, 0, 27, false);
+        }
+        else if(index <= 35) {
+        	mergeItemStack(stack, 36, 54, false);
+        }
+        else if(index >= 36 && index < 54) {
+        	mergeItemStack(stack, 0, 36, false);
         }
         
-        if(index >= 36 && index < 54) {
-        	if(!mergeItemStack(stack, 0, 35, false)) {
-        		return ItemStack.EMPTY;
-        	}
-        }
+        if(slot != null)
+        	slot.onSlotChanged();
         
-        return stack;
+        return ItemStack.EMPTY;
 	}
 	
 	public void setTradeState(TradeState state) {

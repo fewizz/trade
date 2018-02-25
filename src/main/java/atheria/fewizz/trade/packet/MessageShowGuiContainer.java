@@ -2,23 +2,14 @@ package atheria.fewizz.trade.packet;
 
 import java.util.Objects;
 
-import atheria.fewizz.trade.Trade;
-import atheria.fewizz.trade.Trade.TradeState;
 import atheria.fewizz.trade.client.gui.GuiTrade;
-import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
-import atheria.fewizz.trade.inventory.ContainerTradeClient;
-import atheria.fewizz.trade.inventory.InventoryTrade;
+import atheria.fewizz.trade.inventory.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.network.simpleimpl.*;
+import net.minecraftforge.fml.relauncher.*;
 
 public class MessageShowGuiContainer implements IMessage {
 	public String otherPlayerName;

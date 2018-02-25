@@ -1,19 +1,14 @@
 package atheria.fewizz.trade.client.gui;
 
-import java.util.concurrent.TimeUnit;
-
 import org.lwjgl.opengl.GL11;
 
 import atheria.fewizz.trade.Trade;
 import atheria.fewizz.trade.Trade.TradeState;
 import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
 import atheria.fewizz.trade.packet.MessageTradeState;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiTrade extends GuiContainer {

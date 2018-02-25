@@ -1,7 +1,6 @@
 package atheria.fewizz.trade.inventory;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 
 public class ContainerTradeClient extends ContainerTradeAbstract {
 

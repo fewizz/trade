@@ -1,42 +1,27 @@
 package atheria.fewizz.trade;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.lwjgl.input.Keyboard;
 
-import atheria.fewizz.trade.inventory.ContainerTradeAbstract;
-import atheria.fewizz.trade.inventory.ContainerTradeServer;
-import atheria.fewizz.trade.inventory.InventoryTrade;
-import atheria.fewizz.trade.packet.MessageShowGuiContainer;
-import atheria.fewizz.trade.packet.MessageTradeRequest;
-import atheria.fewizz.trade.packet.MessageTradeState;
+import atheria.fewizz.trade.inventory.*;
+import atheria.fewizz.trade.packet.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.player.*;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.*;
 
 @Mod(name = Trade.NAME, modid = Trade.MODID, version = Trade.VERSION, acceptedMinecraftVersions = "[1.12.0,)")
 public class Trade {
@@ -100,7 +85,7 @@ public class Trade {
 		if (recieverRequests != null && recieverRequests.contains(requestSender.getName())) { // sender accepted reciever's request
 			acceptTrade(requestSender, requestReciever);
 		} else {
-			Set<String> senderRequests = REQUESTS.computeIfAbsent(requestSender.getName(), key -> new HashSet());
+			Set<String> senderRequests = REQUESTS.computeIfAbsent(requestSender.getName(), key -> new HashSet<>());
 			Trade.NETWORK_WRAPPER.sendTo(new MessageTradeRequest(requestSender.getName()), requestReciever);
 
 			senderRequests.add(requestRecieverName);
@@ -113,7 +98,7 @@ public class Trade {
 	public static void acceptTrade(EntityPlayerMP acceptedPlayer, EntityPlayerMP requestedPlayer) {
 		String requestedPlayerName = requestedPlayer.getName();
 		String acceptedPlayerName = acceptedPlayer.getName();
-		System.out.println(requestedPlayerName + " " + acceptedPlayerName);
+		//System.out.println(requestedPlayerName + " " + acceptedPlayerName);
 
 		ContainerTradeServer conR = new ContainerTradeServer(requestedPlayer, acceptedPlayerName);
 		ContainerTradeServer conA = new ContainerTradeServer(acceptedPlayer, requestedPlayerName);

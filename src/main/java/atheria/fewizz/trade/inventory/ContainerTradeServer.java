@@ -1,22 +1,13 @@
 package atheria.fewizz.trade.inventory;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nullable;
-
 import atheria.fewizz.trade.Trade;
 import atheria.fewizz.trade.Trade.TradeState;
 import atheria.fewizz.trade.packet.MessageTradeState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.entity.player.*;
 import net.minecraft.inventory.IContainerListener;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ContainerTradeServer extends ContainerTradeAbstract {
 
