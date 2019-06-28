@@ -7,6 +7,7 @@ import net.minecraft.entity.player.*;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class ContainerTradeServer extends ContainerTradeAbstract {
@@ -67,7 +68,7 @@ public class ContainerTradeServer extends ContainerTradeAbstract {
 		if (otherPlayer == null) {
 			EntityPlayerMP player = getPlayer();
 			player.closeScreen();
-			player.sendMessage(new TextComponentString("Player '" + otherPlayerName + "' is offline now"));
+			player.sendMessage(new TextComponentTranslation("message.trade.playerOffline", otherPlayerName));
 		}
 
 		Trade.NETWORK_WRAPPER.sendTo(new MessageTradeState(tradeState, otherContainer.tradeState), getPlayer());

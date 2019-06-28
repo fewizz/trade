@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 
 public abstract class ContainerTradeAbstract extends Container {
 	final InventoryTrade inventoryTrade;
-	final InventoryPlayer inventoryPlayer;
+	public final InventoryPlayer inventoryPlayer;
 	public final String otherPlayerName;
 	public final String playerName;
 	TradeState tradeState = TradeState.NOT_READY;
@@ -26,17 +26,17 @@ public abstract class ContainerTradeAbstract extends Container {
 	public void initSlots() {
 		for (int h = 0; h < 3; h++) {
 			for (int w = 0; w < 9; w++) {
-				addSlotToContainer(new Slot(inventoryPlayer, h * 9 + w + 9, w * 18 + 6, 92 + h * 18));
+				addSlotToContainer(new Slot(inventoryPlayer, h * 9 + w + 9, 8 + w * 18, 106 + h * 18));
 			}
 		} // 0 - 26
 
 		for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(inventoryPlayer, x, x * 18 + 6, 150));
+			addSlotToContainer(new Slot(inventoryPlayer, x, 8 + x * 18, 164));
 		} // 27 - 35
 
 		for (int x = 0; x < 3; x++) { // 36 - 53
 			for (int y = 0; y < 3; y++) {
-				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, x * 18 + 14, 19 + y * 18) {
+				addSlotToContainer(new Slot(inventoryTrade, x * 3 + y, 17 + x * 18, 17 + y * 18) {
 					@Override
 					public void onSlotChanged() {
 						if (getTradeState() == TradeState.READY)
@@ -44,7 +44,7 @@ public abstract class ContainerTradeAbstract extends Container {
 						super.onSlotChanged();
 					}
 				});
-				addSlotToContainer(new Slot(otherContainer.inventoryTrade, x * 3 + y, x * 18 + 107, 19 + y * 18) {
+				addSlotToContainer(new Slot(otherContainer.inventoryTrade, x * 3 + y, 107 + x * 18, 17 + y * 18) {
 					@Override
 					public boolean canTakeStack(EntityPlayer playerIn) {
 						return false;

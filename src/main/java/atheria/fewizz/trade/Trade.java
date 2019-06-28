@@ -2,6 +2,7 @@ package atheria.fewizz.trade;
 
 import java.util.*;
 
+import net.minecraft.util.text.TextComponentTranslation;
 import org.lwjgl.input.Keyboard;
 
 import atheria.fewizz.trade.inventory.*;
@@ -76,7 +77,7 @@ public class Trade {
 		EntityPlayerMP requestReciever = list.getPlayerByUsername(requestRecieverName);
 
 		if (requestReciever == null) {
-			requestSender.sendMessage(new TextComponentString("Player " + requestRecieverName + " is not found."));
+			requestSender.sendMessage(new TextComponentTranslation("message.trade.playerNotFound", requestRecieverName));
 			return;
 		}
 
@@ -90,7 +91,7 @@ public class Trade {
 
 			senderRequests.add(requestRecieverName);
 
-			requestSender.sendMessage(new TextComponentString("Request sent."));
+			requestSender.sendMessage(new TextComponentTranslation("message.trade.requestOut", requestRecieverName));
 		}
 	}
 

@@ -1,0 +1,8 @@
+gui.trade.ready=Ready
+gui.trade.notready=Not Ready
+gui.trade.waiting=Waiting...
+
+message.trade.requestIn=Got a trade request from %1$s, press %2$s to accept.
+message.trade.requestOut=Trade request sent to %s.
+message.trade.playerOffline=Player %s disconnected, trade is canceled.
+message.trade.playerNotFound=Player %s not found or is offline.

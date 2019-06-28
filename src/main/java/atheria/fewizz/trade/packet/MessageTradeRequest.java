@@ -6,6 +6,7 @@ import atheria.fewizz.trade.Trade;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.*;
@@ -44,7 +45,7 @@ public class MessageTradeRequest implements IMessage {
 		@SideOnly(Side.CLIENT)
 		public void onMessageClient(MessageTradeRequest message) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
-				Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Trade request from player '" + message.playerName +"'"));
+				Minecraft.getMinecraft().player.sendMessage(new TextComponentTranslation("message.trade.requestIn", message.playerName, Trade.keyTrade.getDisplayName()));
 			});
 		}
 	}

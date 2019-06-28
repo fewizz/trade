@@ -1,0 +1,8 @@
+gui.trade.ready=Готов
+gui.trade.notready=Не готов
+gui.trade.waiting=Ожидание...
+
+message.trade.requestIn=Получен запрос на обмен от %1$s, нажмите %2$s чтобы принять.
+message.trade.requestOut=Запрос на обмен отправлен %s.
+message.trade.playerOffline=Игрок %s отключился, обмен отменён.
+message.trade.playerNotFound=Игрок %s не найден.
