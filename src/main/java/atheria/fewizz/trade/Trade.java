@@ -54,7 +54,7 @@ public class Trade {
 
 	@SideOnly(Side.CLIENT)
 	public void onClientInit() {
-		keyTrade = new KeyBinding("Trade", Keyboard.KEY_V, "key.categories.gameplay");
+		keyTrade = new KeyBinding("Trade", Keyboard.KEY_H, "key.categories.multiplayer");
 		ClientRegistry.registerKeyBinding(keyTrade);
 	}
 
