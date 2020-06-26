@@ -14,7 +14,7 @@
       "ru.fewizz.trade.Trade"
     ],
     "client": [
-      "ru.fewizz.trade.Trade$Client"
+      "ru.fewizz.trade.Client"
     ]
   },
 

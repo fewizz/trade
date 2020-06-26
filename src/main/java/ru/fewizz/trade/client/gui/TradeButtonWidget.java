@@ -2,6 +2,8 @@ package ru.fewizz.trade.client.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.BufferBuilder;
@@ -9,7 +11,7 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import ru.fewizz.trade.Trade.TradeState;
+import ru.fewizz.trade.TradeState;
 
 public class TradeButtonWidget extends ButtonWidget {
 	static final Identifier TRADE_BUTTON_TEXTURE = new Identifier("trade:textures/gui/button_trade.png");
@@ -17,8 +19,8 @@ public class TradeButtonWidget extends ButtonWidget {
 	public static final int H = 51 / 2 / 3;
 	final TradeScreen screen;
 	
-	public TradeButtonWidget(TradeScreen screen, int id, int x, int y) {
-		super(x, y, W, H, null, null);
+	public TradeButtonWidget(TradeScreen screen, int id, int x, int y, PressAction action) {
+		super(x, y, W, H, null, action);
 		this.screen = screen;
 	}
 	
@@ -31,13 +33,13 @@ public class TradeButtonWidget extends ButtonWidget {
 		BufferBuilder vb = tess.getBuffer();
 		vb.begin(GL11.GL_QUADS, VertexFormats.POSITION_TEXTURE);
 		
-		float tyOffset = screen.getScreenHandler().getTradeState() != TradeState.READY ? 1F / 3F : 2F / 3F;
+		float tyOffset = screen.getScreenHandler().getState() != TradeState.READY ? 1F / 3F : 2F / 3F;
 		
 		vb.vertex(x, y + height, getZOffset()).texture(0, 1 / 3F + tyOffset).next();
 		vb.vertex(x + width, y + height, getZOffset()).texture(1, 1 / 3F + tyOffset).next();
 		vb.vertex(x + width, y, getZOffset()).texture(1, tyOffset).next();
 		vb.vertex(x, y, getZOffset()).texture(0, tyOffset).next();
-		//RenderSystem.enableAlphaTest();
+		RenderSystem.enableAlphaTest();
 		tess.draw();
 	}
 
