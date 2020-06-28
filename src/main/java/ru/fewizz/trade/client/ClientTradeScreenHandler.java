@@ -1,4 +1,4 @@
-package ru.fewizz.trade;
+package ru.fewizz.trade.client;
 
 import java.util.UUID;
 import java.util.function.Function;
@@ -12,6 +12,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
+import ru.fewizz.trade.Trade;
+import ru.fewizz.trade.TradeScreenHandlerWithPlayer;
+import ru.fewizz.trade.TradeState;
 
 public class ClientTradeScreenHandler
 extends TradeScreenHandlerWithPlayer<
@@ -20,7 +23,6 @@ extends TradeScreenHandlerWithPlayer<
 	ClientPlayerEntity
 > {
 
-	// OOOF
 	public static final ScreenHandlerType<ClientTradeScreenHandler> TYPE =
 		ScreenHandlerRegistry.registerExtended(
 			new Identifier("trade", "trade"),
@@ -53,10 +55,9 @@ extends TradeScreenHandlerWithPlayer<
 		if(sendChanges) {
 			PacketByteBuf packet = new PacketByteBuf(Unpooled.buffer());
 			packet.writeInt(syncId);
-			packet.writeInt(Trader.MAIN.ordinal());
 			packet.writeInt(s.ordinal());
 		
-			ClientSidePacketRegistry.INSTANCE.sendToServer(Trade.TRADE_STATE, packet);
+			ClientSidePacketRegistry.INSTANCE.sendToServer(Trade.TRADE_STATE_C2S, packet);
 		}
 		
 		super.setState(s);

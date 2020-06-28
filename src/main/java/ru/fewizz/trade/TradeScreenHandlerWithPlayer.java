@@ -8,7 +8,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 
 import static net.minecraft.item.ItemStack.EMPTY;
-import static ru.fewizz.trade.TradeScreen.*;
+import static ru.fewizz.trade.client.TradeScreen.*;
 
 public class TradeScreenHandlerWithPlayer<
 	T extends TradeScreenHandlerWithPlayer<T, O, P>,

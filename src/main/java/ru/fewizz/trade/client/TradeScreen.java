@@ -1,4 +1,4 @@
-package ru.fewizz.trade;
+package ru.fewizz.trade.client;
 
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -13,7 +13,7 @@ public class TradeScreen extends HandledScreen<ClientTradeScreenHandler> {
 		BASE = new Identifier("trade:textures/base.png"),
 		CLOTH = new Identifier("trade:textures/cloth.png"),
 		SLOTS = new Identifier("trade:textures/slots.png");
-	static final int
+	public static final int
 		BASE_W = 176,
 		BASE_H = 90,
 		CLOTH_W = 176,
@@ -110,12 +110,8 @@ public class TradeScreen extends HandledScreen<ClientTradeScreenHandler> {
 				0xFFFFFFFF
 		);
 		
-		Long st = handler.swapTimeMillis;
-		
-		if(st != null) {
-			double value = Math.ceil((double)(st - System.currentTimeMillis()) / 1000D);
-			
-			str = Integer.toString((int) value);
+		if(handler.countdown.isEnabled()) {
+			str = Long.toString(handler.countdown.secondsLeft());
 			
 			textRenderer.drawWithShadow(
 					matrices,

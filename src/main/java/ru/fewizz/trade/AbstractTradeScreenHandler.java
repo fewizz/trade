@@ -1,6 +1,5 @@
 package ru.fewizz.trade;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,32 +9,29 @@ import net.minecraft.screen.ScreenHandlerType;
 public abstract class AbstractTradeScreenHandler<T extends AbstractTradeScreenHandler<T, O>, O extends AbstractTradeScreenHandler<O, T>> extends ScreenHandler {
 	public final TradeInventory tradeInventory;
 	public final O other;
-	public Long swapTimeMillis = null;
 	protected TradeState state = TradeState.NOT_READY;
+	public TradeCountdown countdown = null;
 	
 	@SuppressWarnings("unchecked")
 	public AbstractTradeScreenHandler(ScreenHandlerType<?> type, int syncID, Function<T, O> other) {
 		super(type, syncID);
 		this.tradeInventory = new TradeInventory();
 		this.other = other.apply((T) this);
+		if(countdown == null) {
+			countdown = new TradeCountdown();
+			this.other.countdown = countdown;
+		}
 	}
 	
 	public TradeState getState() {
 		return state;
 	}
 	
-	public void setState(TradeState s) {
-		state = s;
+	public void setState(TradeState ts) {
+		this.state = ts;
 		
-		if (s.isReady() && other.getState().isReady()) {
-			swapTimeMillis = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3);
-			other.swapTimeMillis = swapTimeMillis;
-		}
-
-		if (s.isNotReady() || other.getState().isNotReady()) {
-			swapTimeMillis = null;
-			other.swapTimeMillis = null;
-		}
+		if(state.isNotReady())
+			countdown.disable();
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package ru.fewizz.trade;
 public enum Trader {
 	MAIN, OTHER;
 	
-	static Trader fromOrdinal(int ord) {
+	public static Trader fromOrdinal(int ord) {
 		return VALUES[ord];
 	}
 	

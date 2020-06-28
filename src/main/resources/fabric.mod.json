@@ -4,6 +4,7 @@
   "version": "${version}",
 
   "name": "Trade",
+  "description": "Allows trade between players",
   "authors": [
     "fewizz"
   ],
@@ -14,13 +15,13 @@
       "ru.fewizz.trade.Trade"
     ],
     "client": [
-      "ru.fewizz.trade.Client"
+      "ru.fewizz.trade.client.Client"
     ]
   },
 
   "depends": {
     "fabricloader": ">=0.7.4",
-    "fabric": "*",
+    "fabric": ">=0.14.0",
     "minecraft": "1.16.x"
   }
 }

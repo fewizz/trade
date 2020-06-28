@@ -13,6 +13,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.world.level.ServerWorldProperties;
 
 class Server {
 	final MinecraftServer server;
@@ -22,7 +23,7 @@ class Server {
 		this.server = server;
 	}
 	
-	void onTradeStateChange(PacketContext context, PacketByteBuf buf) {
+	void tradeStateChange(PacketContext context, PacketByteBuf buf) {
 		int syncID = buf.readInt();
 		TradeState state = TradeState.fromOrdinal(buf.readInt());
 		
@@ -34,29 +35,79 @@ class Server {
 		});
 	}
 	
+	void tradeRequest(ServerPlayerEntity requester, ServerPlayerEntity acquirer) {
+		if(requester == acquirer) {
+			requester.sendMessage(
+				new LiteralText("You can't trade with yourseld =P"),
+				false
+			);
+			return;
+		}
+		if(!Trade.unlimited_trade && requester.distanceTo(acquirer) > Trade.trade_distance) {
+			requester.sendMessage(
+				new LiteralText("Your'e too far, permitted distance is " + Trade.trade_distance),
+				false
+			);
+			return;
+		}
+		
+		Set<PlayerEntity> requestedPlayers = requests.computeIfAbsent(requester, p -> new HashSet<>());
+		Set<PlayerEntity> acquirerRequestedPlayers =
+				requests.computeIfAbsent(acquirer, p -> new HashSet<>());
+		
+		if(acquirerRequestedPlayers.contains(requester)) {
+			ServerTradeScreenHandler.openFor(requester, acquirer);
+			removeRequest(acquirer, requester);
+		}
+		else if(!requestedPlayers.contains(acquirer)) {
+			requestedPlayers.add(acquirer);
+			requester.sendMessage(new LiteralText("Request sent"), false);
+			acquirer.sendMessage(
+				new LiteralText("Trade request from player " + requester.getEntityName()),
+				false
+			);
+			ServerWorldProperties wp = server
+					.getSaveProperties()
+					.getMainWorldProperties();
+			wp
+				.getScheduledEvents()
+				.setEvent(
+					requestEventName(requester, acquirer),
+					wp.getTime()+Trade.request_time*20,
+					(server, timer, time) -> {
+						requester.sendMessage(
+							new LiteralText("Trade request for player " + acquirer.getEntityName() + " is not acquired"),
+							false
+						);
+						removeRequest(requester, acquirer);
+					}
+				);
+		}
+	}
+	
+	void removeRequest(ServerPlayerEntity requester, ServerPlayerEntity acquirer) {
+		Set<PlayerEntity> requestedPlayers = requests.computeIfAbsent(requester, p -> new HashSet<>());
+		requestedPlayers.remove(acquirer);
+		
+		server
+			.getSaveProperties()
+			.getMainWorldProperties()
+			.getScheduledEvents()
+			.method_22593(requestEventName(requester, acquirer));
+	}
+	
+	private String requestEventName(ServerPlayerEntity requester, ServerPlayerEntity acquirer) {
+		return "trade:request"+"\\"+requester.getUuidAsString()+"\\"+acquirer.getUuidAsString();
+	}
+	
 	void onTradeRequestPacket(PacketContext context, PacketByteBuf buf) {
-		UUID otherPlayerUUID = buf.readUuid();
+		UUID acqUUID = buf.readUuid();
 		
 		server.execute(() -> {
-			ServerPlayerEntity player = (ServerPlayerEntity) context.getPlayer();
-			ServerPlayerEntity otherPlayer = server.getPlayerManager().getPlayer(otherPlayerUUID);
+			ServerPlayerEntity req = (ServerPlayerEntity) context.getPlayer();
+			ServerPlayerEntity acq = server.getPlayerManager().getPlayer(acqUUID);
 			
-			Set<PlayerEntity> requested = requests.computeIfAbsent(player, p -> new HashSet<>());
-			Set<PlayerEntity> otherRequested =
-					requests.computeIfAbsent(otherPlayer, p -> new HashSet<>());
-			
-			if(otherRequested.contains(player)) {
-				ServerTradeScreenHandler.openFor(player, otherPlayer);
-				otherRequested.remove(player);
-			}
-			else if(!requested.contains(otherPlayer)){
-				requested.add(otherPlayer);
-				player.sendMessage(new LiteralText("Request sent"), false);
-				otherPlayer.sendMessage(
-					new LiteralText("Trade request from player " + player.getEntityName()),
-					false
-				);
-			}
+			tradeRequest(req, acq);
 		});
 	}
 }
