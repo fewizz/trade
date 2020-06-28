@@ -1,4 +1,4 @@
-package ru.fewizz.trade.inventory;
+package ru.fewizz.trade;
 
 import net.minecraft.inventory.SimpleInventory;
 

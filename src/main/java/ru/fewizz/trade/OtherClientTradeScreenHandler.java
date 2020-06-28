@@ -1,4 +1,4 @@
-package ru.fewizz.trade.inventory;
+package ru.fewizz.trade;
 
 import java.util.UUID;
 import java.util.function.Function;

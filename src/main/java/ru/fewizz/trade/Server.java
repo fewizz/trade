@@ -9,10 +9,10 @@ import java.util.UUID;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
-import ru.fewizz.trade.inventory.ServerTradeScreenHandler;
 
 class Server {
 	final MinecraftServer server;
@@ -27,10 +27,10 @@ class Server {
 		TradeState state = TradeState.fromOrdinal(buf.readInt());
 		
 		server.execute(() -> {
-			PlayerEntity player = context.getPlayer();
-			if(player.currentScreenHandler.syncId != syncID)
+			ScreenHandler sh = context.getPlayer().currentScreenHandler;
+			if(sh.syncId != syncID)
 				return;
-			((ServerTradeScreenHandler)player.currentScreenHandler).setState(state, false, true);
+			((ServerTradeScreenHandler)sh).setState(state, Trader.OTHER);
 		});
 	}
 	
