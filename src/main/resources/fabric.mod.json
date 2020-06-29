@@ -14,7 +14,7 @@
     "sources": "https://github.com/fewizz/Trade"
   },
   
-  "icon": "assets/trade/icon.png"
+  "icon": "assets/trade/icon.png",
 
   "environment": "*",
   "entrypoints": {
