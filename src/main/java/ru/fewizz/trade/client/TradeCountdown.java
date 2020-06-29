@@ -1,4 +1,4 @@
-package ru.fewizz.trade;
+package ru.fewizz.trade.client;
 
 public class TradeCountdown {
 	long endTimeMillis = Long.MIN_VALUE;
@@ -11,7 +11,7 @@ public class TradeCountdown {
 		endTimeMillis = System.currentTimeMillis() + forSecs*1000;
 	}
 	
-	void disable() {
+	public void disable() {
 		endTimeMillis = Long.MIN_VALUE;
 	}
 	

@@ -7,10 +7,10 @@ import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.timer.Timer;
-import ru.fewizz.trade.client.ClientTradeScreenHandler;
 
 public class ServerTradeScreenHandler
 extends TradeScreenHandlerWithPlayer<
@@ -40,7 +40,7 @@ extends TradeScreenHandlerWithPlayer<
 			ServerPlayerEntity player,
 			Function<ServerTradeScreenHandler, ServerTradeScreenHandler> otherTSHFactory
 		) {
-		super(ClientTradeScreenHandler.TYPE, syncID, player, otherTSHFactory);
+		super(TradeScreenHandler.TYPE, syncID, player, otherTSHFactory);
 	}
 	
 	private void setState0(TradeState s) {
@@ -50,30 +50,33 @@ extends TradeScreenHandlerWithPlayer<
 		super.setState(s);
 		
 		String eventName = "trade:trade\\"+player.getUuidAsString()+"\\"+other.player.getUuidAsString();
-		
-		if (s.isReady() && other.getState().isReady()) {
-			/*player
+		ServerWorldProperties worldProps = player
 				.server
 				.getSaveProperties()
-				.getMainWorldProperties()
-				.getScheduledEvents()
-				.setEvent(eventName, Trade.swap_time, (server, timer, time) -> {
-					for (int i = 0; i < TradeInventory.SIZE; i++) {
-						ItemStack stack = tradeInventory.getStack(i);
-						tradeInventory.setStack(i, other.tradeInventory.getStack(i));
-						other.tradeInventory.setStack(i, stack);
-					}
-					setState(TradeState.NOT_READY);
-					other.setState(TradeState.NOT_READY);
-				});*/
-			countdown.enableForSeconds(Trade.swap_time);
+				.getMainWorldProperties();
+		Timer<MinecraftServer> timer = worldProps.getScheduledEvents();
+		
+		if (s.isReady() && other.getState().isReady()) {
+			timer.setEvent(
+				eventName,
+				worldProps.getTime()+Trade.swap_time*20,
+				new NotSerializableTimerCallback((server, timer0, time) -> {
+				for (int i = 0; i < TradeInventory.SIZE; i++) {
+					ItemStack stack = tradeInventory.getStack(i);
+					tradeInventory.setStack(i, other.tradeInventory.getStack(i));
+					other.tradeInventory.setStack(i, stack);
+				}
+				setState(TradeState.NOT_READY);
+				other.setState(TradeState.NOT_READY);
+			}));
+			
 			PacketByteBuf packet = new PacketByteBuf(Unpooled.buffer());
 			packet.writeInt(syncId);
 			packet.writeInt(Trade.swap_time);
 			ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, Trade.TRADE_START, packet);
 			ServerSidePacketRegistry.INSTANCE.sendToPlayer(other.player, Trade.TRADE_START, packet);
 		} else if(old.isReady() && other.getState().isReady()) {
-			
+			timer.method_22593(eventName);
 		}
 	}
 	
@@ -99,24 +102,10 @@ extends TradeScreenHandlerWithPlayer<
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(sh.player, Trade.TRADE_STATE_S2C, packet);
 	}
 	
-	@Override
-	public void sendContentUpdates() {
-		if (countdown.isEnabled() && countdown.secondsLeft() == 0) {
-			for (int i = 0; i < TradeInventory.SIZE; i++) {
-				ItemStack stack = tradeInventory.getStack(i);
-				tradeInventory.setStack(i, other.tradeInventory.getStack(i));
-				other.tradeInventory.setStack(i, stack);
-			}
-			setState(TradeState.NOT_READY);
-			other.setState(TradeState.NOT_READY);
-			countdown.disable();
-		}
-		super.sendContentUpdates();
-	}
-	
 	boolean closing = false;
 	@Override
 	public void close(PlayerEntity player) {
+		super.close(player);
 		closing = true;
 		
 		if(!other.closing)

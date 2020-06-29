@@ -11,16 +11,17 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 class TradeScreenHandlerFactory implements ExtendedScreenHandlerFactory {
-	TradeScreenHandlerFactoryData data = new TradeScreenHandlerFactoryData();
+	public ScreenHandlerFactory factory;
+	public ServerPlayerEntity otherPlayer;
 
 	public TradeScreenHandlerFactory(ScreenHandlerFactory factory, ServerPlayerEntity otherPlayer) {
-		this.data.factory = factory;
-		this.data.otherPlayer = otherPlayer;
+		this.factory = factory;
+		this.otherPlayer = otherPlayer;
 	}
 	
 	@Override
 	public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-		return data.factory.createMenu(syncId, inv, player);
+		return factory.createMenu(syncId, inv, player);
 	}
 	
 	public Text getDisplayName() {
@@ -28,7 +29,7 @@ class TradeScreenHandlerFactory implements ExtendedScreenHandlerFactory {
 	}
 	
 	public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-		buf.writeUuid(data.otherPlayer.getUuid());
+		buf.writeUuid(otherPlayer.getUuid());
 	}
 	
 }

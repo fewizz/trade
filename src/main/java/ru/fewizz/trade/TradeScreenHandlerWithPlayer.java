@@ -12,16 +12,16 @@ import static ru.fewizz.trade.client.TradeScreen.*;
 
 public class TradeScreenHandlerWithPlayer<
 	T extends TradeScreenHandlerWithPlayer<T, O, P>,
-	O extends AbstractTradeScreenHandler<O, T>,
+	O extends TradeScreenHandler<O, T>,
 	P extends PlayerEntity
 >
-	extends AbstractTradeScreenHandler<T, O>
+	extends TradeScreenHandler<T, O>
 {
 	static final int SLOT_SIZE = 18;
 	public final P player;
 
-	public TradeScreenHandlerWithPlayer(ScreenHandlerType<?> type, int syncID, P player, Function<T, O> other) {
-		super(type, syncID, other);
+	public TradeScreenHandlerWithPlayer(ScreenHandlerType<?> type, int syncID, P player, Function<T, O> otherTSHFactory) {
+		super(type, syncID, otherTSHFactory);
 		this.player = player;
 		
 		for (int h = 0; h < 3; h++) {
@@ -34,7 +34,7 @@ public class TradeScreenHandlerWithPlayer<
 			addSlot(new Slot(player.inventory, x, x * 18 + 8, H - 6 - SLOT_SIZE));
 		} // 27 - 35
 
-		for (int x = 0; x < 3; x++) { // 36 - 53
+		for (int x = 0; x < 3; x++) { // 36 - 44
 			for (int y = 0; y < 3; y++) {
 				addSlot(new Slot(tradeInventory, x * 3 + y, x * 18 + SLOTS_X + 1, SLOTS_Y + 1 + y * 18) {
 					@Override
@@ -44,6 +44,10 @@ public class TradeScreenHandlerWithPlayer<
 						super.onStackChanged(originalItem, itemStack);
 					}
 				});
+			}
+		}
+		for (int x = 0; x < 3; x++) { // 45 - 53
+			for (int y = 0; y < 3; y++) {
 				addSlot(new Slot(this.other.tradeInventory, x * 3 + y, x * 18 + W - SLOTS_X - SLOTS_SIZE + 1, SLOTS_Y + 1 + y * 18) {
 					@Override
 					public boolean canTakeItems(PlayerEntity player) {
@@ -69,12 +73,12 @@ public class TradeScreenHandlerWithPlayer<
 			itemstack = itemstack1.copy();
 
 			if (index >= 27 && index <= 35) {
-				if (!insertItem(itemstack1, 0, 27, false))
+				if (!insertItem(itemstack1, 36, 44, false))
 					return EMPTY;
 			} else if (index <= 35) {
-				if (!insertItem(itemstack1, 36, 54, false))
+				if (!insertItem(itemstack1, 36, 44, false))
 					return EMPTY;
-			} else if (index >= 36 && index < 54) {
+			} else if (index >= 36 && index < 44) {
 				if (!insertItem(itemstack1, 0, 36, false))
 					return EMPTY;
 			}
@@ -92,6 +96,15 @@ public class TradeScreenHandlerWithPlayer<
 		}
 
 		return itemstack;
+	}
+	
+	@Override
+	public void close(PlayerEntity player) {
+		for(int i = 36; i < 44; i++) {
+			transferSlot(player, i);
+		}
+		dropInventory(player, player.world, tradeInventory);
+		super.close(player);
 	}
 
 }

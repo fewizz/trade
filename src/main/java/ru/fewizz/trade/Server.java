@@ -12,7 +12,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.world.level.ServerWorldProperties;
 
 class Server {
@@ -38,17 +38,27 @@ class Server {
 	void tradeRequest(ServerPlayerEntity requester, ServerPlayerEntity acquirer) {
 		if(requester == acquirer) {
 			requester.sendMessage(
-				new LiteralText("You can't trade with yourseld =P"),
+				new TranslatableText("trade.request.yourself"),
 				false
 			);
 			return;
 		}
-		if(!Trade.unlimited_trade && requester.distanceTo(acquirer) > Trade.trade_distance) {
-			requester.sendMessage(
-				new LiteralText("Your'e too far, permitted distance is " + Trade.trade_distance),
-				false
-			);
-			return;
+		if(!Trade.unlimited_trade) {
+			if(requester.world != acquirer.world) {
+				requester.sendMessage(
+					new TranslatableText("trade.request.diff_world"),
+					false
+				);
+				return;
+			}
+			
+			if(requester.distanceTo(acquirer) > Trade.trade_distance) {
+				requester.sendMessage(
+					new TranslatableText("trade.request.too_far", Trade.trade_distance),
+					false
+				);
+				return;
+			}
 		}
 		
 		Set<PlayerEntity> requestedPlayers = requests.computeIfAbsent(requester, p -> new HashSet<>());
@@ -61,26 +71,26 @@ class Server {
 		}
 		else if(!requestedPlayers.contains(acquirer)) {
 			requestedPlayers.add(acquirer);
-			requester.sendMessage(new LiteralText("Request sent"), false);
+			requester.sendMessage(new TranslatableText("trade.request.sent"), false);
 			acquirer.sendMessage(
-				new LiteralText("Trade request from player " + requester.getEntityName()),
+				new TranslatableText("trade.request.from", requester.getEntityName()),
 				false
 			);
 			ServerWorldProperties wp = server
-					.getSaveProperties()
-					.getMainWorldProperties();
+				.getSaveProperties()
+				.getMainWorldProperties();
 			wp
 				.getScheduledEvents()
 				.setEvent(
 					requestEventName(requester, acquirer),
 					wp.getTime()+Trade.request_time*20,
-					(server, timer, time) -> {
+					new NotSerializableTimerCallback((server, timer, time) -> {
 						requester.sendMessage(
-							new LiteralText("Trade request for player " + acquirer.getEntityName() + " is not acquired"),
+							new TranslatableText("trade.request.not_acquired", acquirer.getEntityName()),
 							false
 						);
 						removeRequest(requester, acquirer);
-					}
+					})
 				);
 		}
 	}

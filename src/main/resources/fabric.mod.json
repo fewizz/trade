@@ -4,10 +4,17 @@
   "version": "${version}",
 
   "name": "Trade",
-  "description": "Allows trade between players",
+  "description": "Allows to trade between players",
   "authors": [
     "fewizz"
   ],
+  
+  "contact": {
+    "homepage": "https://github.com/fewizz/Trade",
+    "sources": "https://github.com/fewizz/Trade"
+  },
+  
+  "icon": "assets/trade/icon.png"
 
   "environment": "*",
   "entrypoints": {

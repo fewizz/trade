@@ -40,6 +40,9 @@ public class Trade implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		loadProps();
+		
+		NotSerializableTimerCallback.DummyTimerCallbackSerializer.register();
+		
 		Map<MinecraftServer, Server> serverRef = new IdentityHashMap<>();
 		
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> serverRef.put(server, new Server(server)));
