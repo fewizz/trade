@@ -1,0 +1,11 @@
+{
+	"key.trade": "Обмен",
+	"trade.request.yourself": "Запрос на обмен не отправлен: Вы не можете обмениваться сами с собой",
+	"trade.request.diff_world": "Запрос на обмен не отправлен: Вы находитесь в разных мирах",
+	"trade.request.too_far": "Запрос на обмен не отправлен: Вы слишком далеко, разрешенная дистанция для обмена - %s",
+	"trade.request.sent": "Запрос на обмен отправлен",
+	"trade.request.from": "Получен запрос на обмен от %s",
+	"trade.request.not_acquired": "Игрок %s не принял ваш запрос на обмен",
+	"trade.gui.button.ready": "Готов",
+	"trade.gui.button.not_ready": "Не готов"
+}
