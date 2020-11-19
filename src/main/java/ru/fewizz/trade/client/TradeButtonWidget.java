@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import ru.fewizz.trade.TradeScreenHandler;
 
@@ -15,10 +16,10 @@ public class TradeButtonWidget extends ButtonWidget {
 	final TradeScreenHandler<?, ?> screen;
 	
 	public TradeButtonWidget(TradeScreenHandler<?, ?> handler, int x, int y, PressAction action) {
-		super(x, y, W, H, null, action);
+		super(x, y, W, H, new LiteralText(""), action);
 		this.screen = handler;
 	}
-	
+
 	@Override
 	public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 		setMessage(
