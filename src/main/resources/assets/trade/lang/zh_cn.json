@@ -1,0 +1,11 @@
+{
+	"key.trade": "交易 （Trade）",
+	"trade.request.yourself": "你无法与自己交易",
+	"trade.request.diff_world": "你们处在不同的世界",
+	"trade.request.too_far": "你们相距太远了，允许的最大距离为 %s",
+	"trade.request.sent": "已发送交易请求",
+	"trade.request.from": "来自 %s 的交易请求",
+	"trade.request.not_acquired": "对 %s 的交易请求未被受理",
+	"trade.gui.button.ready": "已就绪",
+	"trade.gui.button.not_ready": "尚未就绪"
+}
