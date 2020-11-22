@@ -18,14 +18,15 @@ extends TradeScreenHandlerWithPlayer<
 	ServerTradeScreenHandler,
 	ServerPlayerEntity
 > {
+	ServerWrapper serverWrapper;
 	
-	public static void openFor(ServerPlayerEntity player0, ServerPlayerEntity player1) {
+	public static void openFor(ServerPlayerEntity player0, ServerPlayerEntity player1, ServerWrapper s) {
 		// https://www.meme-arsenal.com/memes/a8bc14a4a57639a2807023fc6418edd3.jpg
 		player0.openHandledScreen(new TradeScreenHandlerFactory(
 			(syncId0, inv0, p0) -> {
-				return new ServerTradeScreenHandler(syncId0, (ServerPlayerEntity)p0, tsc0 -> {
+				return new ServerTradeScreenHandler(syncId0, (ServerPlayerEntity)p0, s, tsc0 -> {
 					player1.openHandledScreen(new TradeScreenHandlerFactory(
-						(syncId1, inv1, p1) -> new ServerTradeScreenHandler(syncId1, (ServerPlayerEntity)p1, tsc1 -> tsc0),
+						(syncId1, inv1, p1) -> new ServerTradeScreenHandler(syncId1, (ServerPlayerEntity)p1, s, tsc1 -> tsc0),
 						player0
 					));
 					return (ServerTradeScreenHandler) player1.currentScreenHandler;
@@ -38,9 +39,11 @@ extends TradeScreenHandlerWithPlayer<
 	private ServerTradeScreenHandler(
 			int syncID,
 			ServerPlayerEntity player,
+			ServerWrapper s,
 			Function<ServerTradeScreenHandler, ServerTradeScreenHandler> otherTSHFactory
 		) {
 		super(TradeScreenHandler.TYPE, syncID, player, otherTSHFactory);
+		this.serverWrapper = s;
 	}
 	
 	private void setState0(TradeState s) {
@@ -50,8 +53,8 @@ extends TradeScreenHandlerWithPlayer<
 		super.setState(s);
 		
 		String eventName = "trade:trade\\"+player.getUuidAsString()+"\\"+other.player.getUuidAsString();
-		ServerWorldProperties worldProps = player
-				.server
+		ServerWorldProperties worldProps =
+				serverWrapper.server
 				.getSaveProperties()
 				.getMainWorldProperties();
 		Timer<MinecraftServer> timer = worldProps.getScheduledEvents();
@@ -59,7 +62,7 @@ extends TradeScreenHandlerWithPlayer<
 		if (s.isReady() && other.getState().isReady()) {
 			timer.setEvent(
 				eventName,
-				worldProps.getTime()+Trade.swap_time*20,
+				worldProps.getTime()+ serverWrapper.swapTime *20,
 				new NotSerializableTimerCallback((server, timer0, time) -> {
 				for (int i = 0; i < TradeInventory.SIZE; i++) {
 					ItemStack stack = tradeInventory.getStack(i);
@@ -72,7 +75,7 @@ extends TradeScreenHandlerWithPlayer<
 			
 			PacketByteBuf packet = new PacketByteBuf(Unpooled.buffer());
 			packet.writeInt(syncId);
-			packet.writeInt(Trade.swap_time);
+			packet.writeInt(serverWrapper.swapTime);
 			ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, Trade.TRADE_START, packet);
 			ServerSidePacketRegistry.INSTANCE.sendToPlayer(other.player, Trade.TRADE_START, packet);
 		} else if(old.isReady() && other.getState().isReady()) {

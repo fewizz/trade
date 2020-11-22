@@ -1,12 +1,12 @@
 package ru.fewizz.trade;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 import net.fabricmc.fabric.api.network.PacketContext;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -14,13 +14,48 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.world.level.ServerWorldProperties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-class Server {
+class ServerWrapper {
+	public static final Logger LOGGER = LogManager.getLogger();
+
 	final MinecraftServer server;
 	final Map<PlayerEntity, Set<PlayerEntity>> requests = new HashMap<>();
-	
-	Server(MinecraftServer server) {
+
+	public boolean unlimited_trade;
+	public int trade_distance;
+	public int request_time;
+	public int swapTime;
+
+	ServerWrapper(MinecraftServer server) {
 		this.server = server;
+
+		loadProps();
+	}
+
+	public void loadProps() {
+		Path config = FabricLoader.getInstance().getConfigDir().resolve("trade.properties");
+		Properties properties = new Properties();
+
+		if (Files.exists(config)) {
+			try (Reader bufferedReader = Files.newBufferedReader(config)) {
+				properties.load(bufferedReader);
+			} catch (IOException e) {
+				LOGGER.warn("Could not read property file '" + config.toAbsolutePath() + "'", e);
+			}
+		}
+
+		unlimited_trade = Boolean.parseBoolean((String)properties.computeIfAbsent("unlimited_trade", str -> "false"));
+		trade_distance = Integer.parseInt((String)properties.computeIfAbsent("trade_distance", str -> "5"));
+		request_time = Integer.parseInt((String)properties.computeIfAbsent("request_time_second", str -> "10"));
+		swapTime = Integer.parseInt((String)properties.computeIfAbsent("trade_swap_time_second", str -> "3"));
+
+		try (Writer writer = Files.newBufferedWriter(config)) {
+			properties.store(writer, "Note that all commands are applied only on (dedicated/integrated) server side");
+		} catch (IOException e) {
+			LOGGER.warn("Could not store property file '" + config.toAbsolutePath() + "'", e);
+		}
 	}
 	
 	void tradeStateChange(PacketContext context, PacketByteBuf buf) {
@@ -43,7 +78,7 @@ class Server {
 			);
 			return;
 		}
-		if(!Trade.unlimited_trade) {
+		if(!unlimited_trade) {
 			if(requester.world != acquirer.world) {
 				requester.sendMessage(
 					new TranslatableText("trade.request.diff_world"),
@@ -52,9 +87,9 @@ class Server {
 				return;
 			}
 			
-			if(requester.distanceTo(acquirer) > Trade.trade_distance) {
+			if(requester.distanceTo(acquirer) > trade_distance) {
 				requester.sendMessage(
-					new TranslatableText("trade.request.too_far", Trade.trade_distance),
+					new TranslatableText("trade.request.too_far", trade_distance),
 					false
 				);
 				return;
@@ -66,7 +101,7 @@ class Server {
 				requests.computeIfAbsent(acquirer, p -> new HashSet<>());
 		
 		if(acquirerRequestedPlayers.contains(requester)) {
-			ServerTradeScreenHandler.openFor(requester, acquirer);
+			ServerTradeScreenHandler.openFor(requester, acquirer, this);
 			removeRequest(acquirer, requester);
 		}
 		else if(!requestedPlayers.contains(acquirer)) {
@@ -79,11 +114,12 @@ class Server {
 			ServerWorldProperties wp = server
 				.getSaveProperties()
 				.getMainWorldProperties();
+
 			wp
 				.getScheduledEvents()
 				.setEvent(
 					requestEventName(requester, acquirer),
-					wp.getTime()+Trade.request_time*20,
+					wp.getTime()+request_time*20,
 					new NotSerializableTimerCallback((server, timer, time) -> {
 						requester.sendMessage(
 							new TranslatableText("trade.request.not_acquired", acquirer.getEntityName()),
