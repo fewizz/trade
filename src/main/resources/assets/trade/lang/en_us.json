@@ -1,6 +1,6 @@
 {
 	"key.trade": "Trade",
-	"trade.request.yourself": "You can't trade with yourseld =P",
+	"trade.request.yourself": "You can't trade with yourself",
 	"trade.request.diff_world": "You're in different worlds",
 	"trade.request.too_far": "You're too far, permitted distance is %s",
 	"trade.request.sent": "Request sent",

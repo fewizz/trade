@@ -22,7 +22,7 @@
       "ru.fewizz.trade.Trade"
     ],
     "client": [
-      "ru.fewizz.trade.client.Client"
+      "ru.fewizz.trade.client.TradeClient"
     ]
   },
 

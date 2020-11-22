@@ -22,7 +22,7 @@ import ru.fewizz.trade.TradeState;
 import ru.fewizz.trade.Trader;
 
 @Environment(EnvType.CLIENT)
-public class Client implements ClientModInitializer {
+public class TradeClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		MinecraftClient client = MinecraftClient.getInstance();
@@ -67,10 +67,7 @@ public class Client implements ClientModInitializer {
 		);
 		
 		ClientTickEvents.START_CLIENT_TICK.register(client0 -> {
-			if(tradeKey.isPressed() &&
-				client.targetedEntity != null &&
-				client.targetedEntity instanceof PlayerEntity &&
-				client.currentScreen == null)
+			if(tradeKey.isPressed() && client.targetedEntity instanceof PlayerEntity &&  client.currentScreen == null)
 			{
 				PlayerEntity player = (PlayerEntity) client.targetedEntity;
 				sendRequest(player.getUuid());

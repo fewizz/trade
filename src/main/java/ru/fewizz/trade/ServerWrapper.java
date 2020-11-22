@@ -17,24 +17,32 @@ import net.minecraft.world.level.ServerWorldProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// This will be better in cases, when player plays on LAN
 class ServerWrapper {
-	public static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger("TradeServerWrapper");
 
 	final MinecraftServer server;
 	final Map<PlayerEntity, Set<PlayerEntity>> requests = new HashMap<>();
 
-	public boolean unlimited_trade;
-	public int trade_distance;
-	public int request_time;
+	public boolean unlimitedTrade;
+	public int tradeDistance;
+	public int requestTime;
 	public int swapTime;
 
 	ServerWrapper(MinecraftServer server) {
 		this.server = server;
-
 		loadProps();
 	}
 
 	public void loadProps() {
+		try {
+			loadPropsUnsafe();
+		} catch (Exception e) {
+			LOGGER.warn(e.getMessage());
+		}
+	}
+
+	public void loadPropsUnsafe() {
 		Path config = FabricLoader.getInstance().getConfigDir().resolve("trade.properties");
 		Properties properties = new Properties();
 
@@ -42,19 +50,19 @@ class ServerWrapper {
 			try (Reader bufferedReader = Files.newBufferedReader(config)) {
 				properties.load(bufferedReader);
 			} catch (IOException e) {
-				LOGGER.warn("Could not read property file '" + config.toAbsolutePath() + "'", e);
+				throw new RuntimeException("Could not read property file '" + config.toAbsolutePath() + "'", e);
 			}
 		}
 
-		unlimited_trade = Boolean.parseBoolean((String)properties.computeIfAbsent("unlimited_trade", str -> "false"));
-		trade_distance = Integer.parseInt((String)properties.computeIfAbsent("trade_distance", str -> "5"));
-		request_time = Integer.parseInt((String)properties.computeIfAbsent("request_time_second", str -> "10"));
+		unlimitedTrade = Boolean.parseBoolean((String)properties.computeIfAbsent("unlimited_trade", str -> "false"));
+		tradeDistance = Integer.parseInt((String)properties.computeIfAbsent("trade_distance", str -> "5"));
+		requestTime = Integer.parseInt((String)properties.computeIfAbsent("request_time_second", str -> "10"));
 		swapTime = Integer.parseInt((String)properties.computeIfAbsent("trade_swap_time_second", str -> "3"));
 
 		try (Writer writer = Files.newBufferedWriter(config)) {
-			properties.store(writer, "Note that all commands are applied only on (dedicated/integrated) server side");
+			properties.store(writer, "Note that all options are applied only on (dedicated/integrated) server side");
 		} catch (IOException e) {
-			LOGGER.warn("Could not store property file '" + config.toAbsolutePath() + "'", e);
+			throw new RuntimeException("Could not store property file '" + config.toAbsolutePath() + "'", e);
 		}
 	}
 	
@@ -78,7 +86,7 @@ class ServerWrapper {
 			);
 			return;
 		}
-		if(!unlimited_trade) {
+		if(!unlimitedTrade) {
 			if(requester.world != acquirer.world) {
 				requester.sendMessage(
 					new TranslatableText("trade.request.diff_world"),
@@ -87,9 +95,9 @@ class ServerWrapper {
 				return;
 			}
 			
-			if(requester.distanceTo(acquirer) > trade_distance) {
+			if(requester.distanceTo(acquirer) > tradeDistance) {
 				requester.sendMessage(
-					new TranslatableText("trade.request.too_far", trade_distance),
+					new TranslatableText("trade.request.too_far", tradeDistance),
 					false
 				);
 				return;
@@ -119,7 +127,7 @@ class ServerWrapper {
 				.getScheduledEvents()
 				.setEvent(
 					requestEventName(requester, acquirer),
-					wp.getTime()+request_time*20,
+					wp.getTime()+ requestTime *20,
 					new NotSerializableTimerCallback((server, timer, time) -> {
 						requester.sendMessage(
 							new TranslatableText("trade.request.not_acquired", acquirer.getEntityName()),
