@@ -38,10 +38,7 @@ public class TradeScreen extends HandledScreen<ClientTradeScreenHandler> {
 		this.backgroundHeight = BASE_Y + BASE_H - CLOTH_Y;
 	}
 	
-	public static final ScreenRegistry.Factory<ClientTradeScreenHandler, TradeScreen> FACTORY =
-			(handler, inventory, title) -> {
-		return new TradeScreen(handler, inventory, title);
-	};
+	public static final ScreenRegistry.Factory<ClientTradeScreenHandler, TradeScreen> FACTORY = TradeScreen::new;
 
 	@Override
 	public void init() {

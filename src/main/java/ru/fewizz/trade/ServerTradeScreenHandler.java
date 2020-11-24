@@ -42,7 +42,7 @@ extends TradeScreenHandlerWithPlayer<
 			ServerWrapper s,
 			Function<ServerTradeScreenHandler, ServerTradeScreenHandler> otherTSHFactory
 		) {
-		super(TradeScreenHandler.TYPE, syncID, player, otherTSHFactory);
+		super(Trade.TRADE_SCREEN_HANDLER_SCREEN_HANDLER_TYPE, syncID, player, otherTSHFactory);
 		this.serverWrapper = s;
 	}
 	

@@ -5,16 +5,22 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import ru.fewizz.trade.client.ClientTradeScreenHandler;
+import ru.fewizz.trade.client.OtherClientTradeScreenHandler;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Trade implements ModInitializer {
 	public static final Identifier
@@ -22,6 +28,21 @@ public class Trade implements ModInitializer {
 		TRADE_STATE_C2S = new Identifier("trade", "state_c2s"),
 		TRADE_STATE_S2C = new Identifier("trade", "state_s2c"),
 		TRADE_START = new Identifier("trade", "start");
+
+	public static final ScreenHandlerType<ClientTradeScreenHandler> TRADE_SCREEN_HANDLER_SCREEN_HANDLER_TYPE =
+			ScreenHandlerRegistry.registerExtended(
+				new Identifier("trade", "trade"),
+				(int syncId, PlayerInventory inventory, PacketByteBuf bb) -> {
+					UUID otherPlayerUUID = bb.readUuid();
+					return new ClientTradeScreenHandler(
+						syncId,
+						tsh -> new OtherClientTradeScreenHandler(
+							otherPlayerUUID,
+							tsh1 -> tsh
+						)
+					);
+				}
+			);
 
 	@Override
 	public void onInitialize() {
@@ -32,7 +53,7 @@ public class Trade implements ModInitializer {
 		
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> serverToWrapper.put(server, new ServerWrapper(server)));
 		ServerLifecycleEvents.SERVER_STOPPED.register(serverToWrapper::remove);
-		
+
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 			dispatcher
 				.register(

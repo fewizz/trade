@@ -29,7 +29,7 @@ public class TradeClient implements ClientModInitializer {
 		KeyBinding tradeKey = new KeyBinding("key.trade", GLFW.GLFW_KEY_V, "key.categories.gameplay");
 		KeyBindingHelper.registerKeyBinding(tradeKey);
 
-		ScreenRegistry.register(ClientTradeScreenHandler.TYPE, TradeScreen.FACTORY);
+		ScreenRegistry.register(Trade.TRADE_SCREEN_HANDLER_SCREEN_HANDLER_TYPE, TradeScreen.FACTORY);
 		
 		ClientSidePacketRegistry.INSTANCE.register(
 			Trade.TRADE_STATE_S2C,
