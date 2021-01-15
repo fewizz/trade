@@ -5,6 +5,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.player.PlayerInventory;
@@ -12,6 +14,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import ru.fewizz.trade.client.ClientTradeScreenHandler;
@@ -89,13 +93,11 @@ public class Trade implements ModInitializer {
 				)
 			);
 		});
-		ServerSidePacketRegistry.INSTANCE.register(TRADE_REQUEST, (context, buffer) -> {
-			MinecraftServer mcs = context.getPlayer().getServer();
-			serverToWrapper.get(mcs).onTradeRequestPacket(context, buffer);
+		ServerPlayNetworking.registerGlobalReceiver(TRADE_REQUEST, (server, player, handler, buf, responseSender) -> {
+			serverToWrapper.get(server).onTradeRequestPacket(player, buf);
 		});
-		ServerSidePacketRegistry.INSTANCE.register(TRADE_STATE_C2S, (context, buffer) -> {
-			MinecraftServer mcs = context.getPlayer().getServer();
-			serverToWrapper.get(mcs).tradeStateChange(context, buffer);
+		ServerPlayNetworking.registerGlobalReceiver(TRADE_STATE_C2S, (server, player, handler, buf, responseSender) -> {
+			serverToWrapper.get(server).tradeStateChange(player, buf);
 		});
 	}
 }

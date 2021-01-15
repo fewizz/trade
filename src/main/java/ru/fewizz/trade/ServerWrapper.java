@@ -66,12 +66,12 @@ class ServerWrapper {
 		}
 	}
 	
-	void tradeStateChange(PacketContext context, PacketByteBuf buf) {
+	void tradeStateChange(ServerPlayerEntity player, PacketByteBuf buf) {
 		int syncID = buf.readInt();
 		TradeState state = TradeState.fromOrdinal(buf.readInt());
 		
 		server.execute(() -> {
-			ScreenHandler sh = context.getPlayer().currentScreenHandler;
+			ScreenHandler sh = player.currentScreenHandler;
 			if(sh.syncId != syncID)
 				return;
 			((ServerTradeScreenHandler)sh).setState(state, Trader.OTHER);
@@ -154,14 +154,13 @@ class ServerWrapper {
 		return "trade:request"+"\\"+requester.getUuidAsString()+"\\"+acquirer.getUuidAsString();
 	}
 	
-	void onTradeRequestPacket(PacketContext context, PacketByteBuf buf) {
+	void onTradeRequestPacket(ServerPlayerEntity player, PacketByteBuf buf) {
 		UUID acqUUID = buf.readUuid();
 		
 		server.execute(() -> {
-			ServerPlayerEntity req = (ServerPlayerEntity) context.getPlayer();
 			ServerPlayerEntity acq = server.getPlayerManager().getPlayer(acqUUID);
 			
-			tradeRequest(req, acq);
+			tradeRequest(player, acq);
 		});
 	}
 }

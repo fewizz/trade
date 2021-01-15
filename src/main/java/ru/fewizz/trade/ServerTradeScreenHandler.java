@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -62,7 +63,7 @@ extends TradeScreenHandlerWithPlayer<
 		if (s.isReady() && other.getState().isReady()) {
 			timer.setEvent(
 				eventName,
-				worldProps.getTime()+ serverWrapper.swapTime *20,
+				worldProps.getTime() + serverWrapper.swapTime *20,
 				new NotSerializableTimerCallback((server, timer0, time) -> {
 				for (int i = 0; i < TradeInventory.SIZE; i++) {
 					ItemStack stack = tradeInventory.getStack(i);
@@ -76,8 +77,8 @@ extends TradeScreenHandlerWithPlayer<
 			PacketByteBuf packet = new PacketByteBuf(Unpooled.buffer());
 			packet.writeInt(syncId);
 			packet.writeInt(serverWrapper.swapTime);
-			ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, Trade.TRADE_START, packet);
-			ServerSidePacketRegistry.INSTANCE.sendToPlayer(other.player, Trade.TRADE_START, packet);
+			ServerPlayNetworking.send(player, Trade.TRADE_START, packet);
+			ServerPlayNetworking.send(other.player, Trade.TRADE_START, packet);
 		} else if(old.isReady() && other.getState().isReady()) {
 			timer.method_22593(eventName);
 		}
@@ -102,7 +103,7 @@ extends TradeScreenHandlerWithPlayer<
 		packet.writeInt(sh.syncId);
 		packet.writeInt(tr.ordinal());
 		packet.writeInt(getState().ordinal());
-		ServerSidePacketRegistry.INSTANCE.sendToPlayer(sh.player, Trade.TRADE_STATE_S2C, packet);
+		ServerPlayNetworking.send(sh.player, Trade.TRADE_STATE_S2C, packet);
 	}
 	
 	boolean closing = false;

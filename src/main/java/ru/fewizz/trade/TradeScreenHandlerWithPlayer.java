@@ -38,6 +38,16 @@ public class TradeScreenHandlerWithPlayer<
 			for (int y = 0; y < 3; y++) {
 				addSlot(new Slot(tradeInventory, x * 3 + y, x * 18 + SLOTS_X + 1, SLOTS_Y + 1 + y * 18) {
 					@Override
+					public boolean canTakeItems(PlayerEntity player) {
+						return state.isNotReady();
+					}
+
+					@Override
+					public boolean canInsert(ItemStack stack) {
+						return state.isNotReady();
+					}
+
+					@Override
 					public void onStackChanged(ItemStack originalItem, ItemStack itemStack) {
 						if (getState().isReady())
 							setState(TradeState.NOT_READY);
@@ -72,13 +82,10 @@ public class TradeScreenHandlerWithPlayer<
 			ItemStack itemstack1 = slot.getStack();
 			itemstack = itemstack1.copy();
 
-			if (index >= 27 && index <= 35) {
+			if (index <= 35) {
 				if (!insertItem(itemstack1, 36, 44, false))
 					return EMPTY;
-			} else if (index <= 35) {
-				if (!insertItem(itemstack1, 36, 44, false))
-					return EMPTY;
-			} else if (index >= 36 && index < 44) {
+			} else if (index <= 44) {
 				if (!insertItem(itemstack1, 0, 36, false))
 					return EMPTY;
 			}
