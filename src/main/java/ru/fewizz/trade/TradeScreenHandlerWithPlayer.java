@@ -26,12 +26,12 @@ public class TradeScreenHandlerWithPlayer<
 		
 		for (int h = 0; h < 3; h++) {
 			for (int w = 0; w < 9; w++) {
-				addSlot(new Slot(player.inventory, h * 9 + w + 9, 8 + w * SLOT_SIZE, BASE_Y + 8 + h * SLOT_SIZE));
+				addSlot(new Slot(player.getInventory(), h * 9 + w + 9, 8 + w * SLOT_SIZE, BASE_Y + 8 + h * SLOT_SIZE));
 			}
 		} // 0 - 26
 
 		for (int x = 0; x < 9; x++) {
-			addSlot(new Slot(player.inventory, x, x * 18 + 8, H - 6 - SLOT_SIZE));
+			addSlot(new Slot(player.getInventory(), x, x * 18 + 8, H - 6 - SLOT_SIZE));
 		} // 27 - 35
 
 		for (int x = 0; x < 3; x++) { // 36 - 44
@@ -48,10 +48,10 @@ public class TradeScreenHandlerWithPlayer<
 					}
 
 					@Override
-					public void onStackChanged(ItemStack originalItem, ItemStack itemStack) {
+					public void setStack(ItemStack stack) {
 						if (getState().isReady())
 							setState(TradeState.NOT_READY);
-						super.onStackChanged(originalItem, itemStack);
+						super.setStack(stack);
 					}
 				});
 			}
@@ -110,7 +110,7 @@ public class TradeScreenHandlerWithPlayer<
 		for(int i = 36; i < 44; i++) {
 			transferSlot(player, i);
 		}
-		dropInventory(player, player.world, tradeInventory);
+		dropInventory(player, tradeInventory);
 		super.close(player);
 	}
 

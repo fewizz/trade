@@ -1,6 +1,6 @@
 package ru.fewizz.trade;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.timer.Timer;
@@ -19,11 +19,11 @@ public final class NotSerializableTimerCallback implements TimerCallback<Minecra
 		}
 
 		@Override
-		public void serialize(CompoundTag tag, C callback) {
+		public void serialize(NbtCompound nbt, C callback) {
 		}
 
 		@Override
-		public C deserialize(CompoundTag tag) {
+		public C deserialize(NbtCompound nbt) {
 			return null;
 		}
 		

@@ -1,5 +1,7 @@
 package ru.fewizz.trade.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
@@ -44,7 +46,7 @@ public class TradeScreen extends HandledScreen<ClientTradeScreenHandler> {
 	public void init() {
 		super.init();
 		
-		addButton(new TradeButtonWidget(handler, x + SLOTS_X + SLOTS_SIZE/2 - TradeButtonWidget.W/2, y + BUTTON_Y, button ->
+		addDrawableChild(new TradeButtonWidget(handler, x + SLOTS_X + SLOTS_SIZE/2 - TradeButtonWidget.W/2, y + BUTTON_Y, button ->
 			handler.setState(handler.getState().opposite())
 		));
 		ButtonWidget other = new TradeButtonWidget(
@@ -54,7 +56,7 @@ public class TradeScreen extends HandledScreen<ClientTradeScreenHandler> {
 				button -> {}
 		);
 		other.active = false;
-		addButton(other);
+		addDrawableChild(other);
 	}
 	
 	@Override
@@ -64,13 +66,13 @@ public class TradeScreen extends HandledScreen<ClientTradeScreenHandler> {
 			top = this.y,
 			right = this.x + this.backgroundWidth;
 		
-		client.getTextureManager().bindTexture(CLOTH);
+		RenderSystem.setShaderTexture(0, CLOTH);
 		drawTexture(matrices, left + CLOTH_X, top + CLOTH_Y, CLOTH_W, CLOTH_H);
 		
-		client.getTextureManager().bindTexture(BASE);
+		RenderSystem.setShaderTexture(0, BASE);
 		drawTexture(matrices, left + BASE_X, top + BASE_Y, BASE_W, BASE_H);
 		
-		client.getTextureManager().bindTexture(SLOTS);
+		RenderSystem.setShaderTexture(0, SLOTS);
 		drawTexture(
 				matrices,
 				left + SLOTS_X,

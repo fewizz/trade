@@ -10,10 +10,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
@@ -25,15 +26,14 @@ import ru.fewizz.trade.Trader;
 public class TradeClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
-		MinecraftClient client = MinecraftClient.getInstance();
 		KeyBinding tradeKey = new KeyBinding("key.trade", GLFW.GLFW_KEY_V, "key.categories.gameplay");
 		KeyBindingHelper.registerKeyBinding(tradeKey);
 
 		ScreenRegistry.register(Trade.TRADE_SCREEN_HANDLER_SCREEN_HANDLER_TYPE, TradeScreen.FACTORY);
 		
-		ClientSidePacketRegistry.INSTANCE.register(
+		ClientPlayNetworking.registerGlobalReceiver(
 			Trade.TRADE_STATE_S2C,
-			(ctx, buffer) -> {
+			(client, handler, buffer, responseSender) -> {
 				int syncID = buffer.readInt();
 				Trader trader = Trader.fromOrdinal(buffer.readInt());
 				TradeState state = TradeState.fromOrdinal(buffer.readInt());
@@ -51,13 +51,13 @@ public class TradeClient implements ClientModInitializer {
 				});
 			}
 		);
-		ClientSidePacketRegistry.INSTANCE.register(
+		ClientPlayNetworking.registerGlobalReceiver(
 			Trade.TRADE_START,
-			(ctx, buffer) -> {
+			(client, handler, buffer, responseSender) -> {
 				int syncID = buffer.readInt();
 				int seconds = buffer.readInt();
 				
-				ctx.getTaskQueue().execute(() -> {
+				client.execute(() -> {
 					ScreenHandler sh = client.player.currentScreenHandler;
 					if(sh.syncId != syncID)
 						return;
@@ -66,6 +66,8 @@ public class TradeClient implements ClientModInitializer {
 			}
 		);
 		
+
+		var client = MinecraftClient.getInstance();
 		ClientTickEvents.START_CLIENT_TICK.register(client0 -> {
 			if(tradeKey.isPressed() && client.targetedEntity instanceof PlayerEntity &&  client.currentScreen == null)
 			{
@@ -78,8 +80,7 @@ public class TradeClient implements ClientModInitializer {
 	static void sendRequest(UUID uuid) {
 		PacketByteBuf packet = new PacketByteBuf(Unpooled.buffer());
 		packet.writeUuid(uuid);
-		
-		ClientSidePacketRegistry.INSTANCE.sendToServer(
+		ClientPlayNetworking.send(
 			Trade.TRADE_REQUEST,
 			packet
 		);

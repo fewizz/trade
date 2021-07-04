@@ -1,34 +1,34 @@
 {
-  "schemaVersion": 1,
-  "id": "trade",
-  "version": "${version}",
+	"schemaVersion": 1,
+	"id": "trade",
+	"version": "${version}",
 
-  "name": "Trade",
-  "description": "Allows to trade between players",
-  "authors": [
-    "fewizz"
-  ],
-  
-  "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/trade",
-    "sources": "https://github.com/fewizz/Trade"
-  },
-  
-  "icon": "assets/trade/icon.png",
+	"name": "Trade",
+	"description": "Allows to trade between players",
+	"authors": [
+		"fewizz"
+	],
+	
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/trade",
+		"sources": "https://github.com/fewizz/Trade"
+	},
+	
+	"icon": "assets/trade/icon.png",
 
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "ru.fewizz.trade.Trade"
-    ],
-    "client": [
-      "ru.fewizz.trade.client.TradeClient"
-    ]
-  },
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"ru.fewizz.trade.Trade"
+		],
+		"client": [
+			"ru.fewizz.trade.client.TradeClient"
+		]
+	},
 
-  "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": ">=0.14.0",
-    "minecraft": "1.16.x"
-  }
+	"depends": {
+		"fabricloader": ">=0.11.0",
+		"fabric": ">=0.36.0",
+		"minecraft": "1.17"
+	}
 }
