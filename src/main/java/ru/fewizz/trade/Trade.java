@@ -63,7 +63,7 @@ public class Trade implements ModInitializer {
 					.executes(cmd -> {
 						serverToWrapper.get(
 							cmd.getSource()
-							.getMinecraftServer()
+							.getServer()
 						).tradeRequest(
 							cmd.getSource().getPlayer(),
 							EntityArgumentType.getPlayer(cmd, "player")
@@ -74,10 +74,10 @@ public class Trade implements ModInitializer {
 				)
 				.then(
 					CommandManager.literal("reload")
-					.requires(src -> src.hasPermissionLevel(src.getMinecraftServer().getOpPermissionLevel()))
+					.requires(src -> src.hasPermissionLevel(src.getServer().getOpPermissionLevel()))
 					.executes(cmd -> {
 						try {
-							serverToWrapper.get(cmd.getSource().getMinecraftServer()).loadProps();
+							serverToWrapper.get(cmd.getSource().getServer()).loadProps();
 						}
 						catch (Exception e) {
 							cmd.getSource().sendError(new LiteralText(e.getMessage()));
