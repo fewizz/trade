@@ -79,7 +79,7 @@ extends TradeScreenHandlerWithPlayer<
 			ServerPlayNetworking.send(player, Trade.TRADE_START, packet);
 			ServerPlayNetworking.send(other.player, Trade.TRADE_START, packet);
 		} else if(old.isReady() && other.getState().isReady()) {
-			timer.method_22593(eventName);
+			timer.remove(eventName);
 		}
 	}
 	

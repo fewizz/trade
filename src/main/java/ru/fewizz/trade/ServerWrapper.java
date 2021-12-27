@@ -146,7 +146,7 @@ class ServerWrapper {
 			.getSaveProperties()
 			.getMainWorldProperties()
 			.getScheduledEvents()
-			.method_22593(requestEventName(requester, acquirer));
+			.remove(requestEventName(requester, acquirer));
 	}
 	
 	private String requestEventName(ServerPlayerEntity requester, ServerPlayerEntity acquirer) {
